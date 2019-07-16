@@ -1,1 +1,1 @@
-export { default } from './api';
+export { Api } from './Types';
