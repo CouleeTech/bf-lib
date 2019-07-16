@@ -1,0 +1,82 @@
+{
+  "name": "bf-lib",
+  "version": "0.1.0",
+  "description": "the standard client library for block-5 services",
+  "main": "lib/index",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "commit": "git-cz",
+    "check": "tsc -p tsconfig.build.json -noEmit",
+    "format": "prettier --write \"src/**/*.{ts,js,json}\"",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "postversion": "git push && git push --tags",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "prepare": "npm run build",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "version": "npm run format && git add -A src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/CouleeTech/bf-lib.git"
+  },
+  "keywords": [
+    "bf-lib",
+    "coulee",
+    "tech",
+    "block-5",
+    "standard",
+    "client",
+    "library"
+  ],
+  "author": "Coulee Tech",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CouleeTech/bf-lib/issues"
+  },
+  "homepage": "https://github.com/CouleeTech/bf-lib#readme",
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run check && npm run lint",
+      "pre-commit": "npm run lint",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "bf-types": "^2.4.19"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^8.1.0",
+    "@commitlint/config-conventional": "^8.1.0",
+    "@types/jest": "^24.0.15",
+    "@types/node": "^12.6.4",
+    "commitizen": "^3.1.1",
+    "husky": "^3.0.0",
+    "jest": "^24.8.0",
+    "prettier": "^1.18.2",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.18.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.5.3"
+  }
+}
