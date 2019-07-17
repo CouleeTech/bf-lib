@@ -42,8 +42,9 @@ async function init(settings: InitSettings) {
   libModuleMap.set(LibModule.API, Api);
 
   Object.assign(instance, { getLibModule, nexus });
+  Object.freeze(instance);
   initialized = true;
 }
 
 const [instance, system] = proxyWrap<SystemInstance, SystemWrapper>({}, { init });
-export default Object.freeze(system);
+export default system;

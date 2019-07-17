@@ -45,6 +45,9 @@ export function proxyWrap<T extends object, W extends Record<string, any> | unde
 ): [T, T & W] {
   const proxy = new Proxy(target, {
     get: intercept(wrapper || {}),
+    set: () => {
+      throw new Error('Illegal access to an immutable object.');
+    },
   });
 
   return [target as T, proxy];

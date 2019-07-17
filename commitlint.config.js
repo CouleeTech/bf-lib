@@ -7,6 +7,6 @@ module.exports = {
       'always',
       ['build', 'ci', 'docs', 'feat', 'fix', 'perf', 'refactor', 'revert', 'style', 'test', 'wip', 'chore'],
     ],
-    'scope-enum': [2, 'always', ['api', 'auth', 'common', 'store']],
+    'scope-enum': [2, 'always', ['api', 'auth', 'common', 'store', 'system']],
   },
 };
