@@ -5,6 +5,7 @@ export interface Nexus {
   getUrl(): string;
   getLoginUrl(returnUrl?: string): string;
   getUser(): IUserEntity;
+  logOut(): void;
 }
 
 type FirstStageNexus = Omit<Nexus, 'getUser'>;
@@ -27,9 +28,16 @@ export default async function nexus(config: NexusConfig, client: ClientConfig): 
     return `${baseUrl}/login?returnUrl=${returnUrl}`;
   }
 
+  function logOut() {
+    if (client.type === ClientType.BROWSER && typeof window !== 'undefined') {
+      window.location.href = `${baseUrl}/logout?returnUrl=${window.location.href}`;
+    }
+  }
+
   const instance: FirstStageNexus = {
     getUrl,
     getLoginUrl,
+    logOut,
   };
 
   try {

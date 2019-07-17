@@ -48,11 +48,16 @@ async function getOrganization(): Promise<IModuleLink> {
   return moduleLink(CORE_MODULES.ORGANIZATION, System.nexus.getUser().organization[0]);
 }
 
+function logOut() {
+  System.nexus.logOut();
+}
+
 const auth: Auth = {
   getUser,
   getUserDoc,
   getUserDocs,
   getOrganization,
+  logOut,
 };
 
 export default Object.freeze(auth);
