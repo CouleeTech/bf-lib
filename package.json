@@ -4,20 +4,18 @@
   "private": false,
   "description": "the standard client library for block-5 services",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && cp LICENSE README.md package.json lib/",
+    "build": "tsc -p tsconfig.build.json && cp -rf LICENSE README.md package.json lib/",
     "commit": "git-cz",
     "check": "tsc -p tsconfig.build.json -noEmit",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "postversion": "git push && git push --tags",
-    "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
-    "prepare": "npm run build",
     "test": "jest",
     "test:cov": "jest --coverage",
     "version": "npm run format && git add -A src",
     "patchpub": "npm version patch && npm run pub",
-    "pub": "cd lib && npm publish"
+    "pub": " npm test && npm run lint && && npm run build && cd lib && npm publish"
   },
   "repository": {
     "type": "git",
