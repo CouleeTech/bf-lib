@@ -1,43 +1,49 @@
 import Api from '../api/Api';
-import Auth, { setAuthInstance } from '../auth/Auth';
-import { Auth as AuthInterface } from '../auth/Types';
-import { toDisplay } from '../common';
+import Auth from '../auth/Auth';
+import { ClientConfig, NexusConfig, proxyWrap, toDisplay } from '../common';
+import Nexus, { Nexus as NexusType } from './Nexus';
 import { LibModule } from './Types';
 
 export type InitSettings = {
-  auth: AuthInterface;
+  nexus: NexusConfig;
+  client: ClientConfig;
 };
 
+interface SystemWrapper {
+  init: (settings: InitSettings) => void;
+}
+
+interface SystemInstance {
+  getLibModule: <T>(type: LibModule) => T;
+  nexus: NexusType;
+}
+
+export type System = SystemInstance & SystemWrapper;
+
 let initialized = false;
-const libModuleMap = new Map<LibModule, any>();
 
 async function init(settings: InitSettings) {
   if (initialized) {
     return;
   }
 
-  setAuthInstance(settings.auth);
-  setLibModule(LibModule.AUTH, Auth);
-  setLibModule(LibModule.API, Api);
+  const libModuleMap = new Map<LibModule, any>();
+  const nexus = await Nexus(settings.nexus, settings.client);
 
+  function getLibModule<T>(type: LibModule): T {
+    const module = libModuleMap.get(type);
+    if (!module) {
+      throw new Error(`No instance was found for the ${toDisplay(type)} Lib Module.`);
+    }
+    return module;
+  }
+
+  libModuleMap.set(LibModule.AUTH, Auth);
+  libModuleMap.set(LibModule.API, Api);
+
+  Object.assign(instance, { getLibModule, nexus });
   initialized = true;
 }
 
-function getLibModule<T>(type: LibModule): T {
-  const module = libModuleMap.get(type);
-  if (!module) {
-    throw new Error(`No instance was found for the ${toDisplay(type)} Lib Module.`);
-  }
-  return module;
-}
-
-function setLibModule(type: LibModule, module: any) {
-  if (!initialized) {
-    libModuleMap.set(type, module);
-  }
-}
-
-export default Object.freeze({
-  init,
-  getLibModule,
-});
+const [instance, system] = proxyWrap<SystemInstance, SystemWrapper>({}, { init });
+export default Object.freeze(system);

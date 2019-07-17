@@ -1,47 +1,51 @@
-import { IModuleLink, IUser, IUserEntity } from 'bf-types';
-import { Nullable } from '../common';
+import { CORE_MODULES, IModuleLink, IUser, IUserEntity } from 'bf-types';
+import { Api } from '../api';
+import { moduleLink, Nullable } from '../common';
+import System, { LibModule } from '../system';
 import { Auth } from './Types';
 
-let authInstance: Nullable<Auth> = null;
+let userDoc: Nullable<IUser> = null;
+let userDocs: Nullable<IUser[]> = null;
 
 async function getUser(): Promise<IUserEntity> {
-  if (ensureAuthInstance(authInstance)) {
-    return authInstance.getUser();
-  }
-
-  throw new Error('No instance was found for the Auth Module.');
+  return System.nexus.getUser();
 }
 
 async function getUserDoc(): Promise<IUser> {
-  if (ensureAuthInstance(authInstance)) {
-    return authInstance.getUserDoc();
+  if (userDoc) {
+    return userDoc;
   }
 
-  throw new Error('No instance was found for the Auth Module.');
+  const api = System.getLibModule<Api>(LibModule.API);
+  const userId = System.nexus.getUser().sub;
+  const user = await api.get<IUser>(`core/user/entity/${userId}`);
+
+  if (!user) {
+    throw new Error('Failed to retrieve the document for the authenticated user.');
+  }
+
+  userDoc = user;
+  return user;
 }
 
 async function getUserDocs(): Promise<IUser[]> {
-  if (ensureAuthInstance(authInstance)) {
-    return authInstance.getUserDocs();
+  if (userDocs) {
+    return userDocs;
   }
 
-  throw new Error('No instance was found for the Auth Module.');
+  const api = System.getLibModule<Api>(LibModule.API);
+  const users = await api.get<IUser[]>('users');
+
+  if (!users || !Array.isArray(users)) {
+    return [];
+  }
+
+  userDocs = users;
+  return users;
 }
 
 async function getOrganization(): Promise<IModuleLink> {
-  if (ensureAuthInstance(authInstance)) {
-    return authInstance.getOrganization();
-  }
-
-  throw new Error('No instance was found for the Auth Module.');
-}
-
-function getRedirectUrl(): string {
-  if (ensureAuthInstance(authInstance)) {
-    return authInstance.getRedirectUrl();
-  }
-
-  throw new Error('No instance was found for the Auth Module.');
+  return moduleLink(CORE_MODULES.ORGANIZATION, System.nexus.getUser().organization[0]);
 }
 
 const auth: Auth = {
@@ -49,17 +53,6 @@ const auth: Auth = {
   getUserDoc,
   getUserDocs,
   getOrganization,
-  getRedirectUrl,
 };
 
 export default Object.freeze(auth);
-
-export function setAuthInstance(instance: Auth) {
-  if (!instance) {
-    authInstance = instance;
-  }
-}
-
-function ensureAuthInstance(instance: Nullable<Auth>): instance is Auth {
-  return instance ? true : false;
-}

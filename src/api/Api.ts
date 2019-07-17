@@ -14,24 +14,44 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
   const organization = await auth.getOrganization();
   const headers = {
     [X_ORGANIZATION]: organization.module_id,
+    'Content-Type': 'application/json;charset=UTF-8',
   };
 
   return headers;
 }
 
 function redirectToLogin() {
-  const auth = System.getLibModule<Auth>(LibModule.AUTH);
-  const redirectUrl = auth.getRedirectUrl();
-  window.location.href = redirectUrl;
+  window.location.href = System.nexus.getLoginUrl(window.location.href);
 }
 
 function rejectedBecauseAuth(e: AxiosError) {
   return e.response && e.response.status && (e.response.status === FORBIDDEN || e.response.status === UNAUTHORIZED);
 }
 
+/**
+ * Makes sure that a URI contains no leading '/' characters
+ *
+ * @param uri The URI being sanitized
+ */
+function sanitizeUri(uri: string) {
+  const length = uri.length;
+  let i = 0;
+  for (; i < length; i++) {
+    if (uri.charAt(i) !== '/') {
+      break;
+    }
+  }
+
+  if (i === 0) {
+    return uri;
+  }
+
+  return uri.substr(i);
+}
+
 async function request<R = any, P = object, H = object>(
   method: RequestMethod,
-  url: string,
+  uri: string,
   data?: P,
   headers?: H,
 ): Promise<Nullable<R>> {
@@ -52,6 +72,7 @@ async function request<R = any, P = object, H = object>(
   requestSettings.headers ? { ...headers, ...authHeaders } : authHeaders;
 
   try {
+    const url = `${System.nexus.getUrl()}/${sanitizeUri(uri)}`;
     const response = (await Axios(url, requestSettings)) as AxiosResponse<R>;
     if (!response.data) {
       return null;
@@ -67,20 +88,20 @@ async function request<R = any, P = object, H = object>(
   return null;
 }
 
-async function get<R = any, P = object, H = object>(url: string, params?: P, headers?: H): Promise<Nullable<R>> {
-  return request<R, P, H>(GET, url, params, headers);
+async function get<R = any, P = object, H = object>(uri: string, params?: P, headers?: H): Promise<Nullable<R>> {
+  return request<R, P, H>(GET, uri, params, headers);
 }
 
-async function del<R = any, P = object, H = object>(url: string, params?: P, headers?: H): Promise<Nullable<R>> {
-  return request<R, P, H>(DELETE, url, params, headers);
+async function del<R = any, P = object, H = object>(uri: string, params?: P, headers?: H): Promise<Nullable<R>> {
+  return request<R, P, H>(DELETE, uri, params, headers);
 }
 
-async function post<R = any, P = object, H = object>(url: string, payload?: P, headers?: H): Promise<Nullable<R>> {
-  return request<R, P, H>(POST, url, payload, headers);
+async function post<R = any, P = object, H = object>(uri: string, payload?: P, headers?: H): Promise<Nullable<R>> {
+  return request<R, P, H>(POST, uri, payload, headers);
 }
 
-async function put<R = any, P = object, H = object>(url: string, payload?: P, headers?: H): Promise<Nullable<R>> {
-  return request<R, P, H>(PUT, url, payload, headers);
+async function put<R = any, P = object, H = object>(uri: string, payload?: P, headers?: H): Promise<Nullable<R>> {
+  return request<R, P, H>(PUT, uri, payload, headers);
 }
 
 const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put }));

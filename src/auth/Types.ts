@@ -5,5 +5,4 @@ export interface Auth {
   getUserDoc(): Promise<IUser>;
   getUserDocs(): Promise<IUser[]>;
   getOrganization(): Promise<IModuleLink>;
-  getRedirectUrl(): string;
 }
