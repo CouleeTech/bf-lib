@@ -15,7 +15,7 @@
     "test:cov": "jest --coverage",
     "version": "npm run format && git add -A src",
     "patchpub": "npm version patch && npm run pub",
-    "pub": " npm test && npm run lint && npm run build && cd lib && npm publish"
+    "pub": " npm test && npm run lint && npm run build && cd lib && rm -f tsconfig.build.tsbuildinfo && npm publish"
   },
   "repository": {
     "type": "git",
