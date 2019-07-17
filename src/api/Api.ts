@@ -1,9 +1,10 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
 import { makeCallable, Nullable } from '../common';
 import System, { LibModule } from '../system';
 import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_ORGANIZATION } from './Consts';
-import { Api } from './Types';
+import { Api, SearchOptions } from './Types';
 
 async function getAuthHeaders(): Promise<Record<string, any>> {
   if (process.env.NODE_ENV === 'test') {
@@ -104,5 +105,15 @@ async function put<R = any, P = object, H = object>(uri: string, payload?: P, he
   return request<R, P, H>(PUT, uri, payload, headers);
 }
 
-const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put }));
+async function search<T = any>(
+  domain: Domain,
+  module: DomainModule,
+  filters: ISearchFilter[],
+  options?: SearchOptions,
+): Promise<T[]> {
+  const response = await request(PUT, `${domain}/${module}/search`, { ...options, filters });
+  return response ? response : [];
+}
+
+const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put, search }));
 export default api;
