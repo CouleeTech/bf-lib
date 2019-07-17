@@ -4,6 +4,7 @@ coverage
 tscache
 
 # configs
+commitlint.config.js
 tsconfig.json
 tsconfig.build.json
 tsconfig.build.tsbuildinfo
