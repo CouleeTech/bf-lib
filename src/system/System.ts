@@ -1,8 +1,5 @@
-import Api from '../api/Api';
-import Auth from '../auth/Auth';
 import { ClientConfig, NexusConfig } from '../common';
 import { Lock, lock, proxyWrap } from '../common/Utils';
-import Module from '../module/Module';
 import Nexus, { Nexus as NexusType } from './Nexus';
 import { LibModule } from './Types';
 
@@ -39,16 +36,20 @@ async function init(settings: InitSettings) {
   const nexus = await Nexus(settings.nexus, settings.client);
 
   function getLibModule<T>(type: LibModule): T {
-    const module = libModuleMap.get(type);
-    if (!module) {
+    const libModule = libModuleMap.get(type);
+    if (!libModule) {
       throw new Error('An attempt was mad to access an instance for a missing Lib Module.');
     }
-    return module(seal);
+    return libModule(seal);
   }
 
-  libModuleMap.set(LibModule.AUTH, Auth);
-  libModuleMap.set(LibModule.API, Api);
-  libModuleMap.set(LibModule.MODULE, Module);
+  const auth = require('../auth/Auth');
+  const api = require('../api/Api');
+  const module = require('../module/Module');
+
+  libModuleMap.set(LibModule.AUTH, auth);
+  libModuleMap.set(LibModule.API, api);
+  libModuleMap.set(LibModule.MODULE, module);
 
   Object.assign(instance, { getLibModule, nexus });
   Object.freeze(instance);
