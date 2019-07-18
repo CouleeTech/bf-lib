@@ -1,7 +1,8 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
-import { makeCallable, Nullable } from '../common';
+import { Nullable } from '../common';
+import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
 import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_ORGANIZATION } from './Consts';
 import { Api, SearchOptions } from './Types';
@@ -116,4 +117,4 @@ async function search<T = any>(
 }
 
 const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put, search }));
-export default api;
+export default System.sealModule(api);

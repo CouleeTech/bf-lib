@@ -45,10 +45,32 @@ export function proxyWrap<T extends object, W extends Record<string, any> | unde
 ): [T, T & W] {
   const proxy = new Proxy(target, {
     get: intercept(wrapper || {}),
-    set: () => {
-      throw new Error('Illegal access to an immutable object.');
+    set() {
+      throw new Error('Illegal access to a protected object.');
     },
   });
 
   return [target as T, proxy];
+}
+
+export type Lock<T> = (suppliedKey: symbol) => T;
+
+export function lock<T extends object>(obj: T, key: symbol): Lock<T> {
+  const guard = Object.freeze({ key });
+
+  function unlock(suppliedKey: symbol) {
+    const keyRef = suppliedKey;
+    if (typeof keyRef === 'symbol' && guard.key === keyRef) {
+      return obj;
+    }
+    throw new Error('Illegal access to a protected object.');
+  }
+
+  unlock[Symbol.hasInstance] = () => false;
+  (unlock as any)[Symbol.toStringTag] = () => '';
+  (unlock as any)[Symbol.iterator] = function*() {
+    yield '';
+  };
+
+  return Object.freeze(unlock);
 }

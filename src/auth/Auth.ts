@@ -60,4 +60,4 @@ const auth: Auth = {
   logOut,
 };
 
-export default Object.freeze(auth);
+export default System.sealModule(Object.freeze(auth));
