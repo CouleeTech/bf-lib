@@ -1,5 +1,5 @@
 import { ClientConfig, NexusConfig } from '../common';
-import { Lock, lock, proxyWrap } from '../common/Utils';
+import { proxyWrap } from '../common/Utils';
 import Nexus, { Nexus as NexusType } from './Nexus';
 import { LibModule } from './Types';
 
@@ -23,6 +23,25 @@ export type System = SystemInstance & SystemWrapper;
 let initialized = false;
 const seal = Symbol();
 
+type Lock<T> = (suppliedKey: symbol) => T;
+
+function lock<T extends object>(obj: T, key: symbol): Lock<T> {
+  const guard = Object.freeze({ key });
+
+  function unlock(suppliedKey: symbol) {
+    const keyRef = suppliedKey;
+    if (typeof keyRef === 'symbol' && guard.key === keyRef) {
+      return obj;
+    }
+    throw new Error('Illegal access to a protected object.');
+  }
+
+  Object.defineProperty(unlock, 'name', { value: Symbol() });
+  Object.defineProperty(unlock, 'prototype', { value: null });
+  Object.defineProperty(unlock, '__proto__', { value: null });
+  return Object.freeze(unlock);
+}
+
 function sealModule<T extends object>(module: T): Lock<T> {
   return lock<T>(module, seal);
 }
@@ -43,9 +62,9 @@ async function init(settings: InitSettings) {
     return libModule(seal);
   }
 
-  const auth = require('../auth/Auth');
-  const api = require('../api/Api');
-  const module = require('../module/Module');
+  const auth = require('../auth/Auth').default;
+  const api = require('../api/Api').default;
+  const module = require('../module/Module').default;
 
   libModuleMap.set(LibModule.AUTH, auth);
   libModuleMap.set(LibModule.API, api);

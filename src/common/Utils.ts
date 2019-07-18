@@ -52,19 +52,3 @@ export function proxyWrap<T extends object, W extends Record<string, any> | unde
 
   return [target as T, proxy];
 }
-
-export type Lock<T> = (suppliedKey: symbol) => T;
-
-export function lock<T extends object>(obj: T, key: symbol): Lock<T> {
-  const guard = Object.freeze({ key });
-
-  function unlock(suppliedKey: symbol) {
-    const keyRef = suppliedKey;
-    if (typeof keyRef === 'symbol' && guard.key === keyRef) {
-      return obj;
-    }
-    throw new Error('Illegal access to a protected object.');
-  }
-
-  return Object.freeze(unlock);
-}
