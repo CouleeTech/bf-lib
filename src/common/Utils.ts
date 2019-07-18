@@ -66,11 +66,5 @@ export function lock<T extends object>(obj: T, key: symbol): Lock<T> {
     throw new Error('Illegal access to a protected object.');
   }
 
-  unlock[Symbol.hasInstance] = () => false;
-  (unlock as any)[Symbol.toStringTag] = () => '';
-  (unlock as any)[Symbol.iterator] = function*() {
-    yield '';
-  };
-
   return Object.freeze(unlock);
 }
