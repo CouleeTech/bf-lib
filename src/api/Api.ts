@@ -1,25 +1,46 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
-import { Nullable } from '../common';
+import { minutesToMs, Nullable } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
-import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_ORGANIZATION } from './Consts';
+import {
+  DELETE,
+  FORBIDDEN,
+  GET,
+  POST,
+  PUT,
+  RequestMethod,
+  UNAUTHORIZED,
+  X_CLIENT_TZ_OFFSET,
+  X_ORGANIZATION,
+} from './Consts';
 import { Api, SearchOptions } from './Types';
+
+let lastAuthHeaders = -1;
+let cachedAuthHeaders = {};
 
 async function getAuthHeaders(): Promise<Record<string, any>> {
   if (process.env.NODE_ENV === 'test') {
     return {};
   }
 
+  const timestamp = Date.now();
+  if (timestamp - lastAuthHeaders < 300000) {
+    return cachedAuthHeaders;
+  }
+
+  lastAuthHeaders = timestamp;
   const auth = System.getLibModule<Auth>(LibModule.AUTH);
   const organization = await auth.getOrganization();
-  const headers = {
+
+  cachedAuthHeaders = {
     [X_ORGANIZATION]: organization.module_id,
+    [X_CLIENT_TZ_OFFSET]: minutesToMs(new Date().getTimezoneOffset()),
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  return headers;
+  return cachedAuthHeaders;
 }
 
 function redirectToLogin() {
