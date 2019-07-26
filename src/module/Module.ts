@@ -1,5 +1,6 @@
-import { Domain, DomainModule, IEntity, IModuleLink, UUID } from 'bf-types';
+import { Domain, DomainModule, IEntity, IModuleLink, ISearchFilter, UUID } from 'bf-types';
 import { Api } from '../api';
+import { SearchOptions } from '../api/Types';
 import { domainToUri, moduleToUri, Nullable, PartialExceptFor, validateDomainAndModule } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
@@ -93,7 +94,8 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
 function external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T> {
   const api = System.getLibModule<Api>(LibModule.API);
   const createUri = externalEntityUri(moduleName, 'create');
-  const upddateUri = externalEntityUri(moduleName, 'update');
+  const updateUri = externalEntityUri(moduleName, 'update');
+  const searchUri = 'search';
 
   function get(id: UUID): Promise<Nullable<T>> {
     const uri = externalEntityUri(moduleName, id);
@@ -105,13 +107,19 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
   }
 
   function update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>> {
-    return api.post<T>(upddateUri, data);
+    return api.post<T>(updateUri, data);
+  }
+
+  async function search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]> {
+    const response = await api.put<T[]>(searchUri, { ...options, filters, module_name: moduleName });
+    return response ? response : [];
   }
 
   return Object.freeze({
     get,
     create,
     update,
+    search,
   });
 }
 

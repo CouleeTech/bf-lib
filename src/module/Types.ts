@@ -1,4 +1,5 @@
-import { Domain, DomainModule, IEntity, IModuleLink, ISODATE, ModuleProperty, UUID } from 'bf-types';
+import { Domain, DomainModule, IEntity, IModuleLink, ISearchFilter, ISODATE, ModuleProperty, UUID } from 'bf-types';
+import { SearchOptions } from '../api/Types';
 import { Nullable, PartialExceptFor } from '../common';
 
 type GeneratedProperties = {
@@ -24,6 +25,7 @@ export interface ExternalModuleEntity<T extends IEntity = IEntity> {
   get(id: UUID): Promise<Nullable<T>>;
   create(data: InsertData<T>): Promise<Nullable<T>>;
   update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>>;
+  search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]>;
 }
 
 export interface ModuleInternal {
