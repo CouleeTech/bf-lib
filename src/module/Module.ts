@@ -1,43 +1,13 @@
-import { ALL_MODULES, Domain, DomainModule, DOMAINS, DOMAIN_MODULES, IEntity, IModuleLink, UUID } from 'bf-types';
+import { Domain, DomainModule, IEntity, IModuleLink, UUID } from 'bf-types';
 import { Api } from '../api';
-import { Nullable, toDisplay, toLowerCamel } from '../common';
+import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
 import { InsertData, Module, ModuleEntity } from './Types';
 
-const domainUriMap: Map<Domain, string> = new Map();
-const moduleUriMap: Map<DomainModule, string> = new Map();
-
-for (const domain of Object.values(DOMAINS)) {
-  domainUriMap.set(domain, toLowerCamel(domain));
-}
-
-for (const module of Object.values(ALL_MODULES)) {
-  moduleUriMap.set(module, toLowerCamel(module));
-}
-
-function validateDomainAndModule(domain: Domain, module: DomainModule) {
-  if (!DOMAINS[domain]) {
-    throw new Error(`${domain} is not a valid Entity domain`);
-  }
-
-  if (!ALL_MODULES[module]) {
-    throw new Error(`${module} is not a valid Entity module`);
-  }
-
-  const domainModules: Record<string, string> = DOMAIN_MODULES[domain];
-  if (typeof domainModules[module] !== 'string') {
-    throw new Error(`${module} is not a module of the ${toDisplay(domain)}`);
-  }
-}
-
 function entityUri(domain: Domain, module: DomainModule, text?: string) {
-  const domainUri = domainUriMap.get(domain);
-  const moduleUri = moduleUriMap.get(module);
-
-  if (!domainUri || !moduleUri) {
-    throw new Error('Encountered domain or module name with no associated URI.');
-  }
+  const domainUri = domainToUri(domain);
+  const moduleUri = moduleToUri(module);
 
   if (text) {
     return `${domainUri}/${moduleUri}/entity/${text}`;
