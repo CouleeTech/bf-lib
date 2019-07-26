@@ -1,9 +1,9 @@
 import { Domain, DomainModule, IEntity, IModuleLink, UUID } from 'bf-types';
 import { Api } from '../api';
-import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
+import { domainToUri, moduleToUri, Nullable, PartialExceptFor, validateDomainAndModule } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
-import { InsertData, Module, ModuleEntity } from './Types';
+import { ExternalModuleEntity, InsertData, Module, ModuleEntity } from './Types';
 
 function entityUri(domain: Domain, module: DomainModule, text?: string) {
   const domainUri = domainToUri(domain);
@@ -13,6 +13,13 @@ function entityUri(domain: Domain, module: DomainModule, text?: string) {
     return `${domainUri}/${moduleUri}/entity/${text}`;
   }
   return `${domainUri}/${moduleUri}/entity`;
+}
+
+function externalEntityUri(moduleName: string, text?: string) {
+  if (text) {
+    return `core/entity/external/${moduleName}/${text}`;
+  }
+  return `core/entity/external/${moduleName}`;
 }
 
 function baseGet<T extends IEntity>(api: Api, domain: Domain, module: DomainModule, id: UUID): Promise<Nullable<T>> {
@@ -83,7 +90,32 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
   });
 }
 
-function externalGet<T extends IEntity = IEntity>(
+function external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T> {
+  const api = System.getLibModule<Api>(LibModule.API);
+  const createUri = externalEntityUri(moduleName, 'create');
+  const upddateUri = externalEntityUri(moduleName, 'update');
+
+  function get(id: UUID): Promise<Nullable<T>> {
+    const uri = externalEntityUri(moduleName, id);
+    return api.get<T>(uri);
+  }
+
+  function create(data: InsertData<T>): Promise<Nullable<T>> {
+    return api.post<T>(createUri, data);
+  }
+
+  function update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>> {
+    return api.post<T>(upddateUri, data);
+  }
+
+  return Object.freeze({
+    get,
+    create,
+    update,
+  });
+}
+
+function internalGet<T extends IEntity = IEntity>(
   domain: Domain,
   module: DomainModule,
   id: UUID,
@@ -92,7 +124,7 @@ function externalGet<T extends IEntity = IEntity>(
   return baseGet<T>(System.getLibModule<Api>(LibModule.API), domain, module, id);
 }
 
-function externalCreate<T extends IEntity = IEntity>(
+function internalCreate<T extends IEntity = IEntity>(
   domain: Domain,
   module: DomainModule,
   data: InsertData<T>,
@@ -101,7 +133,7 @@ function externalCreate<T extends IEntity = IEntity>(
   return baseCreate<T>(System.getLibModule<Api>(LibModule.API), domain, module, data);
 }
 
-function externalDelete<T extends IEntity = IEntity, U extends object = object>(
+function internalDelete<T extends IEntity = IEntity, U extends object = object>(
   domain: Domain,
   module: DomainModule,
   id: UUID,
@@ -111,7 +143,7 @@ function externalDelete<T extends IEntity = IEntity, U extends object = object>(
   return baseDelete<T, U>(System.getLibModule<Api>(LibModule.API), domain, module, id, data);
 }
 
-function externalView<U extends object>(
+function internalView<U extends object>(
   domain: Domain,
   module: DomainModule,
   id: UUID,
@@ -123,10 +155,11 @@ function externalView<U extends object>(
 
 const moduleInstance: Module = Object.freeze(
   makeCallable(entity, {
-    get: externalGet,
-    create: externalCreate,
-    delete: externalDelete,
-    view: externalView,
+    get: internalGet,
+    create: internalCreate,
+    delete: internalDelete,
+    view: internalView,
+    external,
   }),
 );
 

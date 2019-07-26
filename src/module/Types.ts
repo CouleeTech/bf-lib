@@ -1,5 +1,5 @@
 import { Domain, DomainModule, IEntity, IModuleLink, ISODATE, ModuleProperty, UUID } from 'bf-types';
-import { Nullable } from '../common';
+import { Nullable, PartialExceptFor } from '../common';
 
 type GeneratedProperties = {
   id: UUID;
@@ -20,7 +20,13 @@ export interface ModuleEntity<T extends IEntity = IEntity> {
   view<U extends object>(id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
 }
 
-export interface ModuleExternal {
+export interface ExternalModuleEntity<T extends IEntity = IEntity> {
+  get(id: UUID): Promise<Nullable<T>>;
+  create(data: InsertData<T>): Promise<Nullable<T>>;
+  update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>>;
+}
+
+export interface ModuleInternal {
   get<T extends IEntity = IEntity>(domain: Domain, module: DomainModule, id: UUID): Promise<Nullable<T>>;
 
   create<T extends IEntity = IEntity>(
@@ -37,8 +43,15 @@ export interface ModuleExternal {
   ): Promise<Nullable<T & IModuleLink>>;
 
   view<U extends object>(domain: Domain, module: DomainModule, id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
+
+  /**
+   * Create an object with access to external module APIs
+   *
+   * @param moduleName The name of the external module formatted in UPPER_SNAKE_CASE
+   */
+  external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T>;
 }
 
-export interface Module<T extends IEntity = IEntity> extends ModuleExternal {
+export interface Module<T extends IEntity = IEntity> extends ModuleInternal {
   <G extends T>(domain: Domain, module: DomainModule): ModuleEntity<G>;
 }

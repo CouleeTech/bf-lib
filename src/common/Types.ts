@@ -20,3 +20,5 @@ export type ClientConfig = {
   type: ClientType;
   apiKey?: string;
 };
+
+export type PartialExceptFor<T, TRequired extends keyof T> = Partial<T> & Pick<T, TRequired>;

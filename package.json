@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "bf-types": "^2.4.24",
+    "bf-types": "^2.4.25",
     "voca": "^1.4.0"
   },
   "devDependencies": {
