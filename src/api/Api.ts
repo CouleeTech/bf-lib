@@ -1,7 +1,7 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
-import { minutesToMs, Nullable } from '../common';
+import { domainToUri, minutesToMs, moduleToUri, Nullable, validateDomainAndModule } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
 import {
@@ -133,7 +133,10 @@ async function search<T = any>(
   filters: ISearchFilter[],
   options?: SearchOptions,
 ): Promise<T[]> {
-  const response = await request(PUT, `${domain}/${module}/search`, { ...options, filters });
+  validateDomainAndModule(domain, module);
+  const domainUri = domainToUri(domain);
+  const moduleUri = moduleToUri(module);
+  const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters });
   return response ? response : [];
 }
 
