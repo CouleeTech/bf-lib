@@ -1,4 +1,17 @@
-import { Domain, DomainModule, IEntity, IModuleLink, ISearchFilter, ISODATE, ModuleProperty, UUID } from 'bf-types';
+import {
+  Domain,
+  DomainModule,
+  IEntity,
+  IModuleLink,
+  ISearchFilter,
+  ISODATE,
+  ModuleProperty,
+  UUID,
+  ICustomAttribute,
+  ICustomAttributeAddedDTO,
+  ICustomAttributeRemovedDTO,
+  ICustomAttributeUpdatedDTO,
+} from 'bf-types';
 import { SearchOptions } from '../api/Types';
 import { Nullable, PartialExceptFor } from '../common';
 
@@ -26,6 +39,15 @@ export interface ExternalModuleEntity<T extends IEntity = IEntity> {
   create(data: InsertData<T>): Promise<Nullable<T>>;
   update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>>;
   search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]>;
+  addCustomAttribute<A>(
+    moduleId: UUID,
+    attribute: Omit<ICustomAttribute<A>, 'id'>,
+  ): Promise<Nullable<ICustomAttributeAddedDTO>>;
+  removeCustomAttribute(moduleId: UUID, attributeId: UUID): Promise<Nullable<ICustomAttributeRemovedDTO>>;
+  updateCustomAttribute<A>(
+    moduleId: UUID,
+    attribute: PartialExceptFor<ICustomAttribute<A>, 'id'>,
+  ): Promise<Nullable<ICustomAttributeUpdatedDTO>>;
 }
 
 export interface ModuleInternal {

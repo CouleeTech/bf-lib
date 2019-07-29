@@ -1,4 +1,18 @@
-import { Domain, DomainModule, IEntity, IModuleLink, ISearchFilter, UUID } from 'bf-types';
+import {
+  Domain,
+  DomainModule,
+  IEntity,
+  IModuleLink,
+  ISearchFilter,
+  UUID,
+  ICustomAttributeRemovedDTO,
+  ICustomAttributeAddedDTO,
+  ICustomAttribute,
+  ICustomAttributeUpdatedDTO,
+  IAddCustomAttributeDTO,
+  IRemoveCustomAttributeDTO,
+  IUpdateCustomAttributeDTO,
+} from 'bf-types';
 import { Api } from '../api';
 import { SearchOptions } from '../api/Types';
 import { domainToUri, moduleToUri, Nullable, PartialExceptFor, validateDomainAndModule } from '../common';
@@ -91,6 +105,10 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
   });
 }
 
+const addCustomAttributeUri = 'core/entity/external/customAttribute/add';
+const removeCustomAttributeUri = 'core/entity/external/customAttribute/remove';
+const updateCustomAttributeUri = 'core/entity/external/customAttribute/update';
+
 function external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T> {
   const api = System.getLibModule<Api>(LibModule.API);
   const createUri = externalEntityUri(moduleName, 'create');
@@ -115,11 +133,44 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
     return response ? response : [];
   }
 
+  function addCustomAttribute<A>(
+    moduleId: UUID,
+    attribute: Omit<ICustomAttribute<A>, 'id'>,
+  ): Promise<Nullable<ICustomAttributeAddedDTO>> {
+    const payload: IAddCustomAttributeDTO = {
+      module: { module_name: moduleName, module_id: moduleId },
+      custom_attribute: attribute,
+    };
+    return api.post(addCustomAttributeUri, payload);
+  }
+
+  function removeCustomAttribute(moduleId: UUID, attributeId: UUID): Promise<Nullable<ICustomAttributeRemovedDTO>> {
+    const payload: IRemoveCustomAttributeDTO = {
+      module: { module_name: moduleName, module_id: moduleId },
+      custom_attribute_id: attributeId,
+    };
+    return api.post(removeCustomAttributeUri, payload);
+  }
+
+  function updateCustomAttribute<A>(
+    moduleId: UUID,
+    attribute: PartialExceptFor<ICustomAttribute<A>, 'id'>,
+  ): Promise<Nullable<ICustomAttributeUpdatedDTO>> {
+    const payload: IUpdateCustomAttributeDTO = {
+      module: { module_name: moduleName, module_id: moduleId },
+      custom_attribute: attribute,
+    };
+    return api.post(updateCustomAttributeUri, payload);
+  }
+
   return Object.freeze({
     get,
     create,
     update,
     search,
+    addCustomAttribute,
+    removeCustomAttribute,
+    updateCustomAttribute,
   });
 }
 
