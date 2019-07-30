@@ -1,17 +1,17 @@
 import {
   Domain,
   DomainModule,
+  IAddCustomAttributeDTO,
+  ICustomAttribute,
+  ICustomAttributeAddedDTO,
+  ICustomAttributeRemovedDTO,
+  ICustomAttributeUpdatedDTO,
   IEntity,
   IModuleLink,
-  ISearchFilter,
-  UUID,
-  ICustomAttributeRemovedDTO,
-  ICustomAttributeAddedDTO,
-  ICustomAttribute,
-  ICustomAttributeUpdatedDTO,
-  IAddCustomAttributeDTO,
   IRemoveCustomAttributeDTO,
+  ISearchFilter,
   IUpdateCustomAttributeDTO,
+  UUID,
 } from 'bf-types';
 import { Api } from '../api';
 import { SearchOptions } from '../api/Types';
@@ -107,7 +107,7 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
 
 const addCustomAttributeUri = 'core/entity/external/customAttribute/add';
 const removeCustomAttributeUri = 'core/entity/external/customAttribute/remove';
-const updateCustomAttributeUri = 'core/entity/external/customAttribute/update';
+const updateCustomAttributeUri = 'core/entity/external/customAttribute/modify';
 
 function external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T> {
   const api = System.getLibModule<Api>(LibModule.API);
