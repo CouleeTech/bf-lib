@@ -15,7 +15,7 @@ import {
 } from 'bf-types';
 import { Api } from '../api';
 import { SearchOptions } from '../api/Types';
-import { domainToUri, moduleToUri, Nullable, PartialExceptFor, validateDomainAndModule } from '../common';
+import { domainToUri, moduleToUri, Nullable, PartialExceptFor, toLowerCamel, validateDomainAndModule } from '../common';
 import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
 import { ExternalModuleEntity, InsertData, Module, ModuleEntity } from './Types';
@@ -31,10 +31,11 @@ function entityUri(domain: Domain, module: DomainModule, text?: string) {
 }
 
 function externalEntityUri(moduleName: string, text?: string) {
+  const moduleNameUri = toLowerCamel(moduleName);
   if (text) {
-    return `core/entity/external/${moduleName}/${text}`;
+    return `core/entity/external/${moduleNameUri}/${text}`;
   }
-  return `core/entity/external/${moduleName}`;
+  return `core/entity/external/${moduleNameUri}`;
 }
 
 function baseGet<T extends IEntity>(api: Api, domain: Domain, module: DomainModule, id: UUID): Promise<Nullable<T>> {
