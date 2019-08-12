@@ -16,6 +16,7 @@
     "version": "npm run format && git add -A src",
     "patchpub": "npm version patch && npm run pub",
     "minorpub": "npm version minor && npm run pub",
+    "majorpub": "npm version major && npm run pub",
     "pub": " npm test && npm run lint && npm run build && cd lib && rm -f tsconfig.build.tsbuildinfo && npm publish"
   },
   "repository": {

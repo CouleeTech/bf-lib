@@ -1,32 +1,11 @@
-import { ClientConfig, ConnectionType, LiveSyncConfig, NexusConfig, Nullable } from '../common';
+import { ConnectionType, Nullable } from '../common';
 import { proxyWrap } from '../common/Utils';
 import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
-import Nexus, { Nexus as NexusType } from './Nexus';
-import { LibModule } from './Types';
-
-export type InitSettings = {
-  nexus: NexusConfig;
-  client: ClientConfig;
-  livesync?: LiveSyncConfig;
-};
-
-interface SystemWrapper {
-  init(settings: InitSettings): void;
-  sealModule<T extends object>(module: T): Lock<T>;
-}
-
-interface SystemInstance {
-  getLibModule: <T>(type: LibModule) => T;
-  liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
-  nexus: NexusType;
-}
-
-export type System = SystemInstance & SystemWrapper;
+import Nexus from './Nexus';
+import { InitSettings, LibModule, Lock, SystemInstance, SystemWrapper } from './Types';
 
 let initialized = false;
 const seal = Symbol();
-
-type Lock<T> = (suppliedKey: symbol) => T;
 
 function lock<T extends object>(obj: T, key: symbol): Lock<T> {
   const guard = Object.freeze({ key });
@@ -55,7 +34,7 @@ async function init(settings: InitSettings) {
   }
 
   const libModuleMap = new Map<LibModule, Lock<any>>();
-  const nexus = await Nexus(settings.nexus, settings.client);
+  const nexus = await Nexus(system, settings.nexus, settings.auth);
   const liveSyncConnectionOptions = settings.livesync ? Object.freeze({ ...settings.livesync }) : null;
 
   function getLibModule<T>(type: LibModule): T {
