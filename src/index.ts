@@ -1,15 +1,16 @@
 import { Api } from './api';
 import { Auth } from './auth';
-import { ClientConfig, NexusConfig } from './common';
+import { ClientConfig, ClientType, ConnectionType, LiveSyncConfig, NexusConfig } from './common';
 import { LiveSync } from './livesync';
 import { Module } from './module';
 import System, { LibModule } from './system';
 
-export { Api, Auth, LiveSync, Module };
+export { Api, Auth, LiveSync, Module, ClientType, ConnectionType };
 
 export type ConfigSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
+  livesync?: LiveSyncConfig;
 };
 
 export interface BfLib {
