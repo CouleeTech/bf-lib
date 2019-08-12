@@ -1,10 +1,11 @@
 import { Api } from './api';
 import { Auth } from './auth';
 import { ClientConfig, NexusConfig } from './common';
+import { LiveSync, LiveSyncConnectionOptions, LiveSyncConnectionType } from './livesync';
 import { Module } from './module';
 import System, { LibModule } from './system';
 
-export { Api, Auth, Module };
+export { Api, Auth, Module, LiveSync, LiveSyncConnectionOptions, LiveSyncConnectionType };
 
 export type ConfigSettings = {
   nexus: NexusConfig;
@@ -25,6 +26,9 @@ export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
     },
     get auth() {
       return System.getLibModule<Auth>(LibModule.AUTH);
+    },
+    get livesync() {
+      return System.getLibModule<LiveSync>(LibModule.LIVESYNC);
     },
     get module() {
       return System.getLibModule<Module>(LibModule.MODULE);

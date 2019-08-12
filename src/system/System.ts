@@ -1,11 +1,13 @@
-import { ClientConfig, NexusConfig } from '../common';
+import { ClientConfig, NexusConfig, Nullable } from '../common';
 import { proxyWrap } from '../common/Utils';
+import { LiveSyncConnectionOptions } from '../livesync/Types';
 import Nexus, { Nexus as NexusType } from './Nexus';
 import { LibModule } from './Types';
 
 export type InitSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
+  livesync?: LiveSyncConnectionOptions;
 };
 
 interface SystemWrapper {
@@ -15,6 +17,7 @@ interface SystemWrapper {
 
 interface SystemInstance {
   getLibModule: <T>(type: LibModule) => T;
+  liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
   nexus: NexusType;
 }
 
@@ -53,6 +56,7 @@ async function init(settings: InitSettings) {
 
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(settings.nexus, settings.client);
+  const liveSyncConnectionOptions = settings.livesync ? Object.freeze({ ...settings.livesync }) : null;
 
   function getLibModule<T>(type: LibModule): T {
     const libModule = libModuleMap.get(type);
@@ -62,15 +66,17 @@ async function init(settings: InitSettings) {
     return libModule(seal);
   }
 
-  const auth = require('../auth/Auth').default;
-  const api = require('../api/Api').default;
-  const module = require('../module/Module').default;
+  function liveSyncOptions(): Nullable<LiveSyncConnectionOptions> {
+    return liveSyncConnectionOptions;
+  }
 
-  libModuleMap.set(LibModule.AUTH, auth);
-  libModuleMap.set(LibModule.API, api);
-  libModuleMap.set(LibModule.MODULE, module);
+  libModuleMap.set(LibModule.AUTH, require('../auth/Auth').default);
+  libModuleMap.set(LibModule.API, require('../api/Api').default);
+  libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
+  libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
 
-  Object.assign(instance, { getLibModule, nexus });
+  const instanceMethods: SystemInstance = { getLibModule, liveSyncOptions, nexus };
+  Object.assign(instance, instanceMethods);
   Object.freeze(instance);
   initialized = true;
 }

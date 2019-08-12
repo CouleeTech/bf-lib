@@ -5,5 +5,6 @@ export type LibModule = EnumLiteralsOf<typeof LibModule>;
 export const LibModule = Object.freeze({
   API: Symbol('API'),
   AUTH: Symbol('AUTH'),
+  LIVESYNC: Symbol('LIVESYNC'),
   MODULE: Symbol('MODULE'),
 } as const);
