@@ -1,11 +1,11 @@
 import { Api } from './api';
 import { Auth } from './auth';
 import { ClientConfig, ClientType, ConnectionType, LiveSyncConfig, NexusConfig } from './common';
-import { LiveSync } from './livesync';
+import { LiveEvent, LiveSync } from './livesync';
 import { Module } from './module';
 import System, { LibModule } from './system';
 
-export { Api, Auth, LiveSync, Module, ClientType, ConnectionType };
+export { Api, Auth, LiveSync, Module, LiveEvent, ClientType, ConnectionType };
 
 export type ConfigSettings = {
   nexus: NexusConfig;

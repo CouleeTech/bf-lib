@@ -1,1 +1,1 @@
-export { LiveSync } from './Types';
+export { LiveEvent, LiveSync } from './Types';
