@@ -16,6 +16,7 @@ export type ConfigSettings = {
 export interface BfLib {
   api: Api;
   auth: Auth;
+  livesync: LiveSync;
   module: Module;
 }
 
