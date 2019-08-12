@@ -1,13 +1,13 @@
-import { ClientConfig, NexusConfig, Nullable } from '../common';
+import { ClientConfig, ConnectionType, LiveSyncConfig, NexusConfig, Nullable } from '../common';
 import { proxyWrap } from '../common/Utils';
-import { LiveSyncConnectionOptions } from '../livesync/Types';
+import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
 import Nexus, { Nexus as NexusType } from './Nexus';
 import { LibModule } from './Types';
 
 export type InitSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
-  livesync?: LiveSyncConnectionOptions;
+  livesync?: LiveSyncConfig;
 };
 
 interface SystemWrapper {
@@ -67,7 +67,15 @@ async function init(settings: InitSettings) {
   }
 
   function liveSyncOptions(): Nullable<LiveSyncConnectionOptions> {
-    return liveSyncConnectionOptions;
+    if (!liveSyncConnectionOptions) {
+      return null;
+    }
+
+    if (liveSyncConnectionOptions.type === ConnectionType.ORGANIZATION) {
+      return { module_name: LiveSyncConnectionType.ORGANIZATION, module_id: nexus.getUser().organization[0] };
+    }
+
+    return null;
   }
 
   libModuleMap.set(LibModule.AUTH, require('../auth/Auth').default);

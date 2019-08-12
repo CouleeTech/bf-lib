@@ -1,1 +1,1 @@
-export { LiveSync, LiveSyncConnectionOptions, LiveSyncConnectionType } from './Types';
+export { LiveSync } from './Types';

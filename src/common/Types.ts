@@ -21,4 +21,14 @@ export type ClientConfig = {
   apiKey?: string;
 };
 
+export type ConnectionType = EnumLiteralsOf<typeof ConnectionType>;
+// tslint:disable-next-line: variable-name
+export const ConnectionType = Object.freeze({
+  ORGANIZATION: 'ORGANIZATION',
+} as const);
+
+export type LiveSyncConfig = {
+  type: ConnectionType;
+};
+
 export type PartialExceptFor<T, TRequired extends keyof T> = Partial<T> & Pick<T, TRequired>;
