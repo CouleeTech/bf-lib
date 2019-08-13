@@ -40,7 +40,7 @@ export default async function nexus(system: System, config: NexusConfig, clientA
   };
 
   try {
-    const user = await clientAuth.connect(system);
+    const user = await clientAuth.connect(baseUrl);
 
     if (!user) {
       throw new Error('Was not able to authenticate the user.');
