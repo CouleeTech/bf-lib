@@ -33,9 +33,18 @@ async function init(settings: InitSettings) {
     return;
   }
 
+  const httpHeaders: Record<string, string> = {};
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(system, settings.nexus, settings.auth);
   const liveSyncConnectionOptions = settings.livesync ? Object.freeze({ ...settings.livesync }) : null;
+
+  function getHttpHeaders(): Record<string, string> {
+    return { ...httpHeaders };
+  }
+
+  function setHttpHeader(key: string, value: string) {
+    httpHeaders[key] = value;
+  }
 
   function getLibModule<T>(type: LibModule): T {
     const libModule = libModuleMap.get(type);
@@ -62,7 +71,7 @@ async function init(settings: InitSettings) {
   libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
   libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
 
-  const instanceMethods: SystemInstance = { getLibModule, liveSyncOptions, nexus };
+  const instanceMethods: SystemInstance = { getHttpHeaders, setHttpHeader, getLibModule, liveSyncOptions, nexus };
   Object.assign(instance, instanceMethods);
   Object.freeze(instance);
   initialized = true;

@@ -18,6 +18,8 @@ export interface SystemWrapper {
 }
 
 export interface SystemInstance {
+  getHttpHeaders(): Record<string, string>;
+  setHttpHeader(key: string, value: string): void;
   getLibModule: <T>(type: LibModule) => T;
   liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
   nexus: Nexus;

@@ -92,7 +92,7 @@ async function request<R = any, P = object, H = object>(
   }
 
   const authHeaders = await getAuthHeaders();
-  requestSettings.headers = headers ? { ...headers, ...authHeaders } : authHeaders;
+  requestSettings.headers = { ...System.getHttpHeaders(), ...headers, ...authHeaders };
 
   try {
     const url = `${System.nexus.getUrl()}/${sanitizeUri(uri)}`;
