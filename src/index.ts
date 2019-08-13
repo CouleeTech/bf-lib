@@ -5,7 +5,18 @@ import { LiveEvent, LiveSync } from './livesync';
 import { Module } from './module';
 import System, { ClientAuth, LibModule } from './system';
 
-export { Api, Auth, LiveSync, Module, LiveEvent, ClientType, ConnectionType };
+export {
+  Api,
+  Auth,
+  LiveSync,
+  Module,
+  LiveEvent,
+  ClientType,
+  ConnectionType,
+  ClientConfig,
+  NexusConfig,
+  LiveSyncConfig,
+};
 
 export type ConfigSettings = {
   nexus: NexusConfig;
