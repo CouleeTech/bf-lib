@@ -73,7 +73,6 @@ async function init(settings: InitSettings) {
 
   const instanceMethods: SystemInstance = { getHttpHeaders, setHttpHeader, getLibModule, liveSyncOptions, nexus };
   Object.assign(instance, instanceMethods);
-  Object.freeze(instance);
   if (settings.auth.afterConnect) {
     settings.auth.afterConnect(instance);
   }
