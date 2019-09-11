@@ -20,6 +20,7 @@ export interface SystemWrapper {
 export interface SystemInstance {
   getHttpHeaders(): Record<string, string>;
   setHttpHeader(key: string, value: string): void;
+  getEventBus(): EventBus;
   getLibModule: <T>(type: LibModule) => T;
   liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
   nexus: Nexus;
@@ -41,4 +42,22 @@ export interface ClientAuth {
   afterConnect?: (system: SystemInstance) => void;
   reconnect(system: SystemInstance): Promise<Nullable<IUserEntity>> | Nullable<IUserEntity>;
   disconnect(system: SystemInstance): void;
+}
+
+export type Event<T> = {
+  topic: string;
+  data: T;
+};
+
+export type EventHandler<T> = (event: Event<T>) => void;
+export type EventHandlerSet = Set<EventHandler<any>>;
+export type EventHandlerMap = Map<string, EventHandlerSet>;
+
+/**
+ * An EventBus is used by the system for interal, decoupled communication
+ * between different modules
+ */
+export interface EventBus {
+  publish(channel: string, event: Event<any>): void;
+  subscribe(channel: string, handler: EventHandler<any>): void;
 }

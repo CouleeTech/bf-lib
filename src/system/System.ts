@@ -1,8 +1,9 @@
 import { ConnectionType, Nullable } from '../common';
 import { proxyWrap } from '../common/Utils';
 import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
+import EventBusGenerator from './EventBus';
 import Nexus from './Nexus';
-import { InitSettings, LibModule, Lock, SystemInstance, SystemWrapper } from './Types';
+import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemWrapper } from './Types';
 
 let initialized = false;
 const seal = Symbol();
@@ -36,7 +37,12 @@ async function init(settings: InitSettings) {
   const httpHeaders: Record<string, string> = {};
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(system, settings.nexus, settings.auth);
+  const eventBus: EventBus = EventBusGenerator();
   const liveSyncConnectionOptions = settings.livesync ? Object.freeze({ ...settings.livesync }) : null;
+
+  function getEventBus(): EventBus {
+    return eventBus;
+  }
 
   function getHttpHeaders(): Record<string, string> {
     return { ...httpHeaders };
@@ -71,7 +77,15 @@ async function init(settings: InitSettings) {
   libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
   libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
 
-  const instanceMethods: SystemInstance = { getHttpHeaders, setHttpHeader, getLibModule, liveSyncOptions, nexus };
+  const instanceMethods: SystemInstance = {
+    getEventBus,
+    getHttpHeaders,
+    setHttpHeader,
+    getLibModule,
+    liveSyncOptions,
+    nexus,
+  };
+
   Object.assign(instance, instanceMethods);
   if (settings.auth.afterConnect) {
     settings.auth.afterConnect(instance);

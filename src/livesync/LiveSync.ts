@@ -1,8 +1,17 @@
 import * as io from 'socket.io-client';
 import * as msgpackParser from 'socket.io-msgpack-parser';
 import { sleep } from '../common/Utils';
-import System from '../system';
-import { ConnectionEventType, LiveSync, Subscription, SubscriptionSet, SyncEventType } from './Types';
+import System, { Event } from '../system';
+import {
+  ConnectionEventType,
+  InternalLiveEvent,
+  LiveSync,
+  LIVE_SYNC,
+  PUBLISH_LIVE_SYNC_EVENT,
+  Subscription,
+  SubscriptionSet,
+  SyncEventType,
+} from './Types';
 
 class LiveSyncException extends Error {
   public constructor(message: string) {
@@ -39,6 +48,7 @@ function begin() {
     return;
   }
 
+  System.getEventBus().subscribe(LIVE_SYNC, handleInternalPublishEvent);
   const connectionOptions = System.liveSyncOptions();
   if (!connectionOptions) {
     // TODO: Myabe add some form of logging here
@@ -107,6 +117,12 @@ function unsubscribe(eventType: SyncEventType, subscription: Subscription): Subs
 }
 
 /* ~~ Helper Functions ~~ */
+
+function handleInternalPublishEvent(event: Event<InternalLiveEvent<any>>) {
+  if (event.topic === PUBLISH_LIVE_SYNC_EVENT) {
+    invokeSubscriptionSet(event.data.eventType, event.data.eventPayload);
+  }
+}
 
 /**
  * Invoke an entire subscription set with data emitted from an event

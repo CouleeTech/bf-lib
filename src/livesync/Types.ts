@@ -1,5 +1,8 @@
 import { IModuleLink, UUID } from 'bf-types';
 
+export const LIVE_SYNC = 'LIVE_SYNC';
+export const PUBLISH_LIVE_SYNC_EVENT = 'PUBLISH_LIVE_SYNC_EVENT';
+
 export enum LiveSyncConnectionType {
   ORGANIZATION = 'ORGANIZATION',
 }
@@ -31,6 +34,11 @@ export interface LiveEvent<T> {
 
   /** Body of the event */
   body: T;
+}
+
+export interface InternalLiveEvent<T> {
+  eventType: SyncEventType;
+  eventPayload: LiveEvent<T>;
 }
 
 /**
