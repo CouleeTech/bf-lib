@@ -16,7 +16,7 @@ export default function eventBus(): EventBus {
 
   function subscribe(channel: string, handler: EventHandler<any>) {
     let eventHandlers = eventHandlerMap.get(channel) as EventHandlerSet;
-    if (eventHandlers) {
+    if (!eventHandlers) {
       eventHandlers = new Set();
       eventHandlerMap.set(channel, eventHandlers);
     }
