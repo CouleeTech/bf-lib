@@ -17,8 +17,8 @@ import { ValidModuleName } from './Types';
 export type SearchFilterPair = [string | ModuleProperty, SearchFilterValueType];
 export type PairOrFilter = ISearchFilter | SearchFilterPair;
 
-// TODO: Add more to this array as needed...
-const VALID_MODULE_NAMES = Object.freeze(Object.values(ALL_MODULES));
+const EXTRA_MODULE_NAMES = Object.freeze(['PLACEHOLDER']);
+const VALID_MODULE_NAMES = Object.freeze([...EXTRA_MODULE_NAMES, ...Object.values(ALL_MODULES)]);
 
 /**
  * Create a new module link object
@@ -78,6 +78,13 @@ export function relatedModule(moduleName: ValidModuleName, moduleId: UUID, modul
  */
 export function emptyModuleLink(): IModuleLink {
   return { module_name: '', module_id: '' };
+}
+
+/**
+ * Creates a new module link that is meant to be used as a placeholder
+ */
+export function placeholderModuleLink(): IModuleLink {
+  return { module_name: 'PLACEHOLDER', module_id: '' };
 }
 
 /**
