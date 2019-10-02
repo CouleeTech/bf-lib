@@ -83,8 +83,8 @@ export function emptyModuleLink(): IModuleLink {
 /**
  * Creates a new module link that is meant to be used as a placeholder
  */
-export function placeholderModuleLink(): IModuleLink {
-  return { module_name: 'PLACEHOLDER', module_id: '' };
+export function placeholderModuleLink(moduleId = ''): IModuleLink {
+  return { module_name: 'PLACEHOLDER', module_id: moduleId };
 }
 
 /**
