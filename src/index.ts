@@ -3,6 +3,7 @@ import { Auth } from './auth';
 import { ClientConfig, ClientType, ConnectionType, LiveSyncConfig, NexusConfig } from './common';
 import { LiveEvent, LiveSync } from './livesync';
 import { Module } from './module';
+import { Multitool } from './multitool';
 import System, { ClientAuth, LibModule, SystemInstance } from './system';
 
 export {
@@ -32,6 +33,7 @@ export interface BfLib {
   auth: Auth;
   livesync: LiveSync;
   module: Module;
+  multitool: Multitool;
 }
 
 export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
@@ -48,6 +50,9 @@ export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
     },
     get module() {
       return System.getLibModule<Module>(LibModule.MODULE);
+    },
+    get multitool() {
+      return System.getLibModule<Multitool>(LibModule.MULTITOOL);
     },
   });
 }

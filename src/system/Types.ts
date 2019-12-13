@@ -35,6 +35,7 @@ export const LibModule = Object.freeze({
   AUTH: Symbol('AUTH'),
   LIVESYNC: Symbol('LIVESYNC'),
   MODULE: Symbol('MODULE'),
+  MULTITOOL: Symbol('MULTITOOL'),
 } as const);
 
 export interface ClientAuth {

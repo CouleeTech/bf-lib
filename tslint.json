@@ -5,6 +5,7 @@
     "no-unused-expression": true
   },
   "rules": {
+    "array-type": [true, "array-simple"],
     "eofline": false,
     "quotemark": [true, "single", "avoid-escape"],
     "indent": false,

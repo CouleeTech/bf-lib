@@ -76,6 +76,7 @@ async function init(settings: InitSettings) {
   libModuleMap.set(LibModule.API, require('../api/Api').default);
   libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
   libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
+  libModuleMap.set(LibModule.MULTITOOL, require('../multitool/Multitool').default);
 
   const instanceMethods: SystemInstance = {
     getEventBus,
