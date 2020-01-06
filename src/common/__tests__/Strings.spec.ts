@@ -1,4 +1,6 @@
 import {
+  formatDecimal,
+  formatFloat,
   toLowerCamel,
   toLowerFirstLetter,
   toLowerSnakeCase,
@@ -44,6 +46,39 @@ describe('Strings', () => {
       const upperResult = toUpperFirstLetter(inputStrings[i]);
       expect(lowerResult).toEqual(lowerFirstLetterStrings[i]);
       expect(upperResult).toEqual(upperFirstLetterStrings[i]);
+    }
+  });
+
+  it('Should be able to format floating point numbers', () => {
+    const testSets: Array<[number, number | false, string]> = [
+      [1.14, false, '1.14'],
+      [1.14345, false, '1.14345'],
+      [1.145643, 2, '1.15'],
+      [1.13456, 3, '1.135'],
+      [1.2344, 1, '1.2'],
+      [1.764514, 0, '1.764514'],
+      [1.2341, 5, '1.23410'],
+      [1, 6, '1.000000'],
+    ];
+
+    for (const [value, decimalPlaces, expectedResult] of testSets) {
+      expect(formatFloat(value, decimalPlaces)).toEqual(expectedResult);
+    }
+  });
+
+  it('Should be able to format decimal numbers', () => {
+    const testSets: Array<[number, string]> = [
+      [1.14, '1.14'],
+      [1, '1.00'],
+      [1.1, '1.10'],
+      [1.1456, '1.15'],
+      [999.14, '999.14'],
+      [1000.14, '1,000.14'],
+      [1000000000.14, '1,000,000,000.14'],
+    ];
+
+    for (const [value, expectedResult] of testSets) {
+      expect(formatDecimal(value)).toEqual(expectedResult);
     }
   });
 });

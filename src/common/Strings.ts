@@ -1,10 +1,40 @@
 import { ALL_MODULES, Domain, DomainModule, DOMAINS, DOMAIN_MODULES } from 'bf-types';
+import { Decimal } from 'decimal.js';
 import { camelCase, capitalize, chain, decapitalize, snakeCase } from 'voca';
 
 /* ~~~ General String Functions ~~~ */
 
-export function formatFloat(value: number, decimalPlaces: number): string {
-  return String(Number(Math.round(parseFloat(value + 'e' + decimalPlaces)) + 'e-' + decimalPlaces));
+export function formatFloat(value: number, decimalPlaces?: number | false): string {
+  let numberValue = NaN;
+
+  if (!decimalPlaces) {
+    numberValue = Number(value);
+    if (Number.isNaN(numberValue)) {
+      numberValue = 0;
+    }
+    return String(numberValue);
+  }
+
+  numberValue = new Decimal(Number(value)).toDP(decimalPlaces).toNumber();
+  if (Number.isNaN(numberValue)) {
+    numberValue = 0;
+  }
+
+  return numberValue.toFixed(decimalPlaces);
+}
+
+export function numberWithCommas(str: string): string {
+  return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export function formatDecimal(value: number, decimalPlaces: number | false = 2) {
+  const rounded = formatFloat(value, decimalPlaces);
+  const chunks = rounded.split('.');
+  if (chunks.length < 2) {
+    return numberWithCommas(rounded);
+  }
+
+  return `${numberWithCommas(chunks[0])}.${chunks[1]}`;
 }
 
 export function toDisplay(str: string): string {
