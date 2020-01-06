@@ -4,7 +4,7 @@ import { ClientConfig, ClientType, ConnectionType, LiveSyncConfig, NexusConfig }
 import { LiveEvent, LiveSync } from './livesync';
 import { Module } from './module';
 import { Multitool } from './multitool';
-import System, { ClientAuth, LibModule, SystemInstance } from './system';
+import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
 
 export {
   Api,
@@ -25,6 +25,7 @@ export type ConfigSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
   auth: ClientAuth;
+  logging: SystemLoggerOptions;
   livesync?: LiveSyncConfig;
 };
 

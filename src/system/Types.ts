@@ -9,8 +9,25 @@ export type InitSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
   auth: ClientAuth;
+  logging: SystemLoggerOptions;
   livesync?: LiveSyncConfig;
 };
+
+export type SystemLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+export type SystemLogLevelMask = SystemLogLevel[];
+
+export type SystemLoggerOptions = {
+  logger: SystemLogger;
+  mask: SystemLogLevelMask;
+};
+
+export interface SystemLogger {
+  debug: (message: any) => void;
+  info: (message: any) => void;
+  warn: (message: any) => void;
+  error: (message: any) => void;
+}
 
 export interface SystemWrapper {
   init(settings: InitSettings): void;
