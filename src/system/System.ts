@@ -3,7 +3,7 @@ import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/T
 import { proxyWrap } from '../system/Utils';
 import EventBusGenerator from './EventBus';
 import Nexus from './Nexus';
-import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemWrapper } from './Types';
+import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemLogLevel, SystemWrapper } from './Types';
 
 let initialized = false;
 const seal = Symbol();
@@ -33,6 +33,27 @@ async function init(settings: InitSettings) {
   if (initialized) {
     return;
   }
+
+  const { logger, mask } = settings.logging;
+  const debugLoggingEnabled = !mask.includes('debug');
+
+  function log(level: SystemLogLevel, message: any) {
+    switch (level) {
+      case 'debug': {
+        if (debugLoggingEnabled) {
+          logger[level](message);
+        }
+        break;
+      }
+
+      default: {
+        logger[level](message);
+        break;
+      }
+    }
+  }
+
+  log('debug', 'beginning to initialize the internal bf-lib system');
 
   const httpHeaders: Record<string, string> = {};
   const libModuleMap = new Map<LibModule, Lock<any>>();
@@ -72,11 +93,13 @@ async function init(settings: InitSettings) {
     return null;
   }
 
+  log('debug', 'beginning to initialize all system lib modules');
   libModuleMap.set(LibModule.AUTH, require('../auth/Auth').default);
   libModuleMap.set(LibModule.API, require('../api/Api').default);
   libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
   libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
   libModuleMap.set(LibModule.MULTITOOL, require('../multitool/Multitool').default);
+  log('debug', 'finished initializing all system lib modules');
 
   const instanceMethods: SystemInstance = {
     getEventBus,
@@ -92,6 +115,8 @@ async function init(settings: InitSettings) {
     settings.auth.afterConnect(instance);
   }
   initialized = true;
+
+  log('debug', 'finished initializing the internal bf-lib system');
 }
 
 const [instance, system] = proxyWrap<SystemInstance, SystemWrapper>({}, { init, sealModule });
