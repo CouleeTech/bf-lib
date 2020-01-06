@@ -16,8 +16,8 @@ import {
 import { Api } from '../api';
 import { SearchOptions } from '../api/Types';
 import { domainToUri, moduleToUri, Nullable, PartialExceptFor, toLowerCamel, validateDomainAndModule } from '../common';
-import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
+import { makeCallable } from '../system/Utils';
 import { ExternalModuleEntity, InsertData, Module, ModuleEntity } from './Types';
 
 function entityUri(domain: Domain, module: DomainModule, text?: string) {

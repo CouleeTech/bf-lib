@@ -1,6 +1,6 @@
 import { ConnectionType, Nullable } from '../common';
-import { proxyWrap } from '../common/Utils';
 import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
+import { proxyWrap } from '../system/Utils';
 import EventBusGenerator from './EventBus';
 import Nexus from './Nexus';
 import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemWrapper } from './Types';

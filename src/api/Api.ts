@@ -2,8 +2,8 @@ import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
 import { domainToUri, minutesToMs, moduleToUri, Nullable, validateDomainAndModule } from '../common';
-import { makeCallable } from '../common/Utils';
 import System, { LibModule } from '../system';
+import { makeCallable } from '../system/Utils';
 import {
   DELETE,
   FORBIDDEN,

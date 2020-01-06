@@ -1,7 +1,7 @@
 import * as io from 'socket.io-client';
 import * as msgpackParser from 'socket.io-msgpack-parser';
-import { sleep } from '../common/Utils';
 import System, { Event } from '../system';
+import { sleep } from '../common/Utils';
 import {
   ConnectionEventType,
   InternalLiveEvent,

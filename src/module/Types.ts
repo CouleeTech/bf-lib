@@ -1,16 +1,16 @@
 import {
   Domain,
   DomainModule,
+  ICustomAttribute,
+  ICustomAttributeAddedDTO,
+  ICustomAttributeRemovedDTO,
+  ICustomAttributeUpdatedDTO,
   IEntity,
   IModuleLink,
   ISearchFilter,
   ISODATE,
   ModuleProperty,
   UUID,
-  ICustomAttribute,
-  ICustomAttributeAddedDTO,
-  ICustomAttributeRemovedDTO,
-  ICustomAttributeUpdatedDTO,
 } from 'bf-types';
 import { SearchOptions } from '../api/Types';
 import { Nullable, PartialExceptFor } from '../common';
