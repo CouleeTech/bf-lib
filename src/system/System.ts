@@ -2,6 +2,7 @@ import { ConnectionType, Nullable } from '../common';
 import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
 import { proxyWrap } from '../system/Utils';
 import EventBusGenerator from './EventBus';
+import { SetInstrumentorLogger } from './Instrumentor';
 import Nexus from './Nexus';
 import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemLogLevel, SystemWrapper } from './Types';
 
@@ -54,6 +55,7 @@ async function init(settings: InitSettings) {
   }
 
   log('debug', 'beginning to initialize the internal bf-lib system');
+  SetInstrumentorLogger(log);
 
   const httpHeaders: Record<string, string> = {};
   const libModuleMap = new Map<LibModule, Lock<any>>();
