@@ -30,7 +30,7 @@ export type NewMeticOptions = {
   scope?: string;
 };
 
-const getTime = typeof window === 'undefined' ? require('perf_hooks').performance.now : performance.now;
+let getTime = () => -1;
 
 /**
  * Used to collect metrics during runtime
@@ -78,6 +78,7 @@ type Ctor = { [Symbol.hasInstance](value: any): boolean };
 let logger: (level: SystemLogLevel, message: any) => void = () => {};
 
 const Instrumentor = (function Instrumentor(this: InternalInstrumentor): Instrumentor {
+  getTime = typeof window === 'undefined' ? require('perf_hooks').performance.now : performance.now;
   this.metricScopes = new Map([['default', 0]]);
   this.metricLabels = new Map([['default', 0]]);
   this.sessionName = '';
