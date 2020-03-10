@@ -1,20 +1,10 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Domain, DomainModule, ISearchFilter } from 'bf-types';
 import { Auth } from '../auth';
-import { domainToUri, minutesToMs, moduleToUri, Nullable, validateDomainAndModule } from '../common';
+import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
 import System, { LibModule } from '../system';
 import { makeCallable } from '../system/Utils';
-import {
-  DELETE,
-  FORBIDDEN,
-  GET,
-  POST,
-  PUT,
-  RequestMethod,
-  UNAUTHORIZED,
-  X_CLIENT_TZ_OFFSET,
-  X_ORGANIZATION,
-} from './Consts';
+import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_CLIENT_TZ, X_ORGANIZATION } from './Consts';
 import { Api, SearchOptions } from './Types';
 
 let lastAuthHeaders = -1;
@@ -36,7 +26,7 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
 
   cachedAuthHeaders = {
     [X_ORGANIZATION]: organization.module_id,
-    [X_CLIENT_TZ_OFFSET]: minutesToMs(new Date().getTimezoneOffset()),
+    [X_CLIENT_TZ]: Intl.DateTimeFormat().resolvedOptions().timeZone,
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
