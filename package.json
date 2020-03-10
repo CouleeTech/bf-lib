@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json && cp -rf LICENSE README.md package.json lib/",
     "commit": "git-cz",
-    "check": "tsc -p tsconfig.build.json -noEmit",
+    "check": "tsc -p tsconfig.check.json -noEmit",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "postversion": "git push && git push --tags",
@@ -65,8 +65,8 @@
     "testEnvironment": "node"
   },
   "dependencies": {
-    "axios": "^0.19.1",
-    "bf-types": "^2.5.142",
+    "axios": "^0.19.2",
+    "bf-types": "^2.7.24",
     "decimal.js": "^10.2.0",
     "socket.io-client": "^2.3.0",
     "socket.io-msgpack-parser": "^2.2.0",
@@ -76,17 +76,17 @@
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
     "@types/axios": "^0.14.0",
-    "@types/jest": "^24.9.0",
-    "@types/node": "^13.1.7",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.0",
     "@types/socket.io-client": "^1.4.32",
     "@types/voca": "^1.4.0",
     "commitizen": "^4.0.3",
-    "husky": "^4.0.10",
-    "jest": "^24.9.0",
+    "husky": "^4.2.3",
+    "jest": "^25.1.0",
     "prettier": "^1.19.1",
-    "ts-jest": "^24.3.0",
-    "tslint": "^5.20.1",
+    "ts-jest": "^25.2.1",
+    "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.3"
   }
 }
