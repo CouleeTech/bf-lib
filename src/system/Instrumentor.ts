@@ -1,4 +1,3 @@
-import { performance } from 'perf_hooks';
 import { SystemLogLevel } from './Types';
 
 export type MetricScopeMap = Map<string, number>;
@@ -30,6 +29,8 @@ export type NewMeticOptions = {
   label?: string;
   scope?: string;
 };
+
+const getTime = typeof window === 'undefined' ? require('perf_hooks').performance.now : performance.now;
 
 /**
  * Used to collect metrics during runtime
@@ -94,7 +95,7 @@ Instrumentor.prototype.beginSession = function beginSession(
 ) {
   logger('debug', `starting a new instrumentor session named: ${name}`);
   this.sessionName = name;
-  this.sessionStart = performance.now();
+  this.sessionStart = getTime();
 
   if (!options.keepLabels) {
     this.metricLabels = new Map([['default', 0]]);
@@ -117,7 +118,7 @@ Instrumentor.prototype.endSession = function endSession(this: InternalInstrument
     metricScopes: strMapToStrArr(this.metricScopes),
     sessionName: this.sessionName,
     sessionStart: this.sessionStart,
-    sessionEnd: performance.now(),
+    sessionEnd: getTime(),
     results: Array.from(this.results),
   };
 
@@ -185,13 +186,13 @@ const MetricCollector = (function MetricCollector(
 } as Ctor) as MetricCollectorConstructor;
 
 MetricCollector.prototype.start = function start(this: InternalMetricCollector): () => void {
-  const start = performance.now();
+  const start = getTime();
   return () =>
     this.onSubmit({
       label_id: this.labelValue,
       scope_id: this.scopeValue,
       start,
-      end: performance.now(),
+      end: getTime(),
     });
 };
 

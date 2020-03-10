@@ -25,6 +25,7 @@
     "no-unused-expression": false,
     "semicolon": [false],
     "no-console": [true],
+    "no-var-requires": false,
     "one-line": [false],
     "one-variable-per-declaration": [false],
     "object-literal-key-quotes": [true, "as-needed"],
