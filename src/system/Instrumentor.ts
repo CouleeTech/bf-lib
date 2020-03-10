@@ -75,10 +75,15 @@ interface MetricCollectorConstructor {
 
 type Ctor = { [Symbol.hasInstance](value: any): boolean };
 
+function load(moduleName: string) {
+  /* tslint:disable no-eval  */
+  return eval('require')(moduleName);
+}
+
 let logger: (level: SystemLogLevel, message: any) => void = () => {};
 
 const Instrumentor = (function Instrumentor(this: InternalInstrumentor): Instrumentor {
-  getTime = typeof window === 'undefined' ? require('perf_hooks').performance.now : performance.now;
+  getTime = typeof window === 'undefined' ? load('perf_hooks').performance.now : performance.now;
   this.metricScopes = new Map([['default', 0]]);
   this.metricLabels = new Map([['default', 0]]);
   this.sessionName = '';
