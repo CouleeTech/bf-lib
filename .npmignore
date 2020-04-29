@@ -13,6 +13,7 @@ tslint.json
 .prettierrc
 .tslintrc
 .eslintrc.json
+.eslintrc.js
 
 # git
 .github
