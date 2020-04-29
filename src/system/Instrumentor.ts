@@ -76,7 +76,7 @@ interface MetricCollectorConstructor {
 type Ctor = { [Symbol.hasInstance](value: any): boolean };
 
 function load(moduleName: string) {
-  /* tslint:disable no-eval  */
+  // eslint-disable-next-line no-eval
   return eval('require')(moduleName);
 }
 
@@ -173,7 +173,7 @@ Instrumentor.prototype.metric = function metric(
     labelValue = this.newLabel(labelName);
   }
 
-  const collector = new MetricCollector(scopeValue, labelValue, result => this.results.push(result));
+  const collector = new MetricCollector(scopeValue, labelValue, (result) => this.results.push(result));
   return collector;
 };
 

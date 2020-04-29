@@ -38,12 +38,9 @@ export function formatDecimal(value: number, decimalPlaces: number | false = 2) 
 }
 
 export function toDisplay(str: string): string {
-  const split = str
-    .replace(/_/g, ' ')
-    .toLocaleLowerCase()
-    .split(' ');
+  const split = str.replace(/_/g, ' ').toLocaleLowerCase().split(' ');
 
-  const toUpper = split.map(s => toUpperFirstLetter(s));
+  const toUpper = split.map((s) => toUpperFirstLetter(s));
 
   return toUpper.join(' ');
 }
@@ -53,10 +50,7 @@ export function toLowerCamel<T extends string = string>(str: T): T {
 }
 
 export function toUpperCamel<T extends string = string>(str: string): T {
-  return (chain(str)
-    .camelCase()
-    .capitalize()
-    .value() as any) as T;
+  return (chain(str).camelCase().capitalize().value() as any) as T;
 }
 
 export function toLowerFirstLetter<T extends string = string>(str: string): T {
@@ -72,10 +66,7 @@ export function toLowerSnakeCase<T extends string = string>(str: string): T {
 }
 
 export function toUpperSnakeCase<T extends string = string>(str: string): T {
-  return (chain(str)
-    .snakeCase()
-    .upperCase()
-    .value() as any) as T;
+  return (chain(str).snakeCase().upperCase().value() as any) as T;
 }
 
 /* ~~~ String Functions with Application Logic ~~~ */

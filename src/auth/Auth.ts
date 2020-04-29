@@ -59,7 +59,7 @@ async function getOrganizationDoc(): Promise<IOrganization> {
   const organization = await api.get<IOrganization>(`core/organization/entity/${organizationId}`);
 
   if (!organization) {
-    throw new Error(`Failed to retrieve the document for the authenticated user's organization.`);
+    throw new Error("Failed to retrieve the document for the authenticated user's organization.");
   }
 
   organizationDoc = organization;
