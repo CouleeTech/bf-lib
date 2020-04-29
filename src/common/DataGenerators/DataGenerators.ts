@@ -1,21 +1,6 @@
-import {
-  ALL_MODULES,
-  DomainModuleLink,
-  IModuleAssociation,
-  IModuleLink,
-  IRelatedModule,
-  ISearchFilter,
-  ModuleProperty,
-  SearchFilterType,
-  SearchFilterValuePrimitives,
-  SearchFilterValueType,
-  UUID,
-} from 'bf-types';
-import { toUpperSnakeCase } from './Strings';
-import { ValidModuleName } from './Types';
-
-export type SearchFilterPair = [string | ModuleProperty, SearchFilterValueType];
-export type PairOrFilter = ISearchFilter | SearchFilterPair;
+import { ALL_MODULES, DomainModuleLink, IModuleAssociation, IModuleLink, IRelatedModule, UUID } from 'bf-types';
+import { toUpperSnakeCase } from '../Strings';
+import { ValidModuleName } from '../Types';
 
 const EXTRA_MODULE_NAMES = Object.freeze(['PLACEHOLDER']);
 const VALID_MODULE_NAMES = Object.freeze([...EXTRA_MODULE_NAMES, ...Object.values(ALL_MODULES)]);
@@ -94,44 +79,10 @@ export function emptyRelatedModule(): IRelatedModule {
   return { module_name: '', module_id: '', module_title: '' };
 }
 
-/* ~~~ Search Filter Generators ~~~ */
-
-export function searchFilter(fieldName: string | ModuleProperty, fieldValue: SearchFilterValueType): ISearchFilter {
-  return {
-    field_name: fieldName,
-    field_value: fieldValue,
-  };
-}
-
-export function searchFilters(...filters: PairOrFilter[]): ISearchFilter[] {
-  return filters.map(searchFilterPairToObject);
-}
-
-export function exactMatchSearchFilter(fieldName: string | ModuleProperty, fieldValue: SearchFilterValuePrimitives) {
-  return searchFilter(fieldName, {
-    type: SearchFilterType.EXACT_MATCH,
-    value: fieldValue,
-  });
-}
-
-export function inListFilter(field: string | ModuleProperty, values: SearchFilterValuePrimitives[]): ISearchFilter {
-  return {
-    field_name: field,
-    field_value: {
-      type: SearchFilterType.IN_LIST,
-      values,
-    },
-  };
-}
-
 function ensureValidModuleName(moduleName: string): ValidModuleName {
   const sanitizedModuleName = toUpperSnakeCase<ValidModuleName>(moduleName);
   if (!VALID_MODULE_NAMES.includes(sanitizedModuleName)) {
     throw new Error(`${sanitizedModuleName} is not allowed to be used as a module name.`);
   }
   return sanitizedModuleName;
-}
-
-function searchFilterPairToObject(filter: PairOrFilter): ISearchFilter {
-  return Array.isArray(filter) ? searchFilter(filter[0], filter[1]) : filter;
 }
