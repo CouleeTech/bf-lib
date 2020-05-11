@@ -60,11 +60,18 @@ function multitool(): Multitool {
     return result.result === MultitoolCommandResult.SUCCESS;
   }
 
+  function runScript(script: string): Promise<Nullable<boolean>> {
+    return getApi().post<boolean>('core/multitoolCommand/script/run', {
+      script,
+    });
+  }
+
   return Object.freeze({
     executeCommand,
     executeCommands,
     isCommandFailedResult,
     isCommandSuccessResult,
+    runScript,
   });
 }
 
