@@ -8,7 +8,7 @@ import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_CLIEN
 import { Api, SearchOptions } from './Types';
 
 let lastAuthHeaders = -1;
-let cachedAuthHeaders = {};
+let cachedAuthHeaders :  Record<string, string> = {};
 
 async function getAuthHeaders(): Promise<Record<string, any>> {
   if (process.env.NODE_ENV === 'test') {
@@ -29,7 +29,10 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
     [X_CLIENT_TZ]: Intl.DateTimeFormat().resolvedOptions().timeZone,
     'Content-Type': 'application/json;charset=UTF-8',
   };
-
+  if( auth.getBearerToken ){
+    const token = await auth.getBearerToken();
+    cachedAuthHeaders['Authorization'] = `Berer ${token}`;
+  }
   return cachedAuthHeaders;
 }
 

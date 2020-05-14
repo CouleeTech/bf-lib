@@ -8,7 +8,7 @@
     "commit": "git-cz",
     "check": "tsc -p tsconfig.check.json -noEmit",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
-    "lint": "eslint './src/**/*.{js,ts,tsx}' --fix",
+    "lint": "eslint './src/**/*.{js,ts,tsx}' --fix || exit 0",
     "postversion": "git push && git push --tags",
     "preversion": "npm run lint",
     "test": "jest",
