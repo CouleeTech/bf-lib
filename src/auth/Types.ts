@@ -6,6 +6,6 @@ export interface Auth {
   getUserDocs(): Promise<IUser[]>;
   getOrganization(): Promise<IModuleLink>;
   getOrganizationDoc(): Promise<IOrganization>;
-  getBearerToken? (): Promise<string>;
+  getBearerToken?(): Promise<string>;
   logOut(): void;
 }
