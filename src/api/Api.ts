@@ -31,7 +31,7 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
   };
   if (auth.getBearerToken) {
     const token = await auth.getBearerToken();
-    cachedAuthHeaders['Authorization'] = `Berer ${token}`;
+    cachedAuthHeaders.Authorization = `Berer ${token}`;
   }
   return cachedAuthHeaders;
 }
