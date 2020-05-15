@@ -19,6 +19,7 @@ export const ClientType = Object.freeze({
 export type ClientConfig = {
   type: ClientType;
   apiKey?: string;
+  getBearerToken?: () => Promise<string>;
 };
 
 export type ConnectionType = EnumLiteralsOf<typeof ConnectionType>;

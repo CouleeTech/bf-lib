@@ -41,6 +41,7 @@ export interface SystemInstance {
   getLibModule: <T>(type: LibModule) => T;
   liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
   nexus: Nexus;
+  getSettings: () => InitSettings;
 }
 
 export type System = SystemInstance & SystemWrapper;
