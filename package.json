@@ -4,9 +4,11 @@
   "private": false,
   "description": "the standard client library for block-5 software",
   "scripts": {
-    "build": "rimraf lib api auth common livesync module multitool system && tsc -p tsconfig.build.json",
-    "commit": "git-cz",
+    "build": "tsc -p tsconfig.build.json",
+    "build:clean": "npm run clean && npm run build",
     "check": "tsc -p tsconfig.check.json -noEmit",
+    "clean": "rimraf index.js index.d.ts lib api auth common livesync module multitool system",
+    "commit": "git-cz",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
     "lint": "eslint './src/**/*.{js,ts,tsx}' --fix",
     "postversion": "git push && git push --tags",
@@ -17,7 +19,7 @@
     "patchpub": "npm version patch && npm publish",
     "minorpub": "npm version minor && npm publish",
     "majorpub": "npm version major && npm publish",
-    "prepare": "npm test && npm run lint && npm run build"
+    "prepare": "npm test && npm run lint && npm run build:clean"
   },
   "repository": {
     "type": "git",
