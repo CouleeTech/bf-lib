@@ -19,7 +19,8 @@
     "patchpub": "npm version patch && npm publish",
     "minorpub": "npm version minor && npm publish",
     "majorpub": "npm version major && npm publish",
-    "prepare": "npm test && npm run lint && npm run build:clean"
+    "prepare": "npm test && npm run lint && npm run build:clean",
+    "postpublish": "npm run clean"
   },
   "repository": {
     "type": "git",

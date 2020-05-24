@@ -1,4 +1,6 @@
 # compiled output
+/index.js
+/index.d.ts
 /lib
 /api
 /auth
