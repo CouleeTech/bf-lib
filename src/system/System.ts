@@ -103,9 +103,6 @@ async function init(settings: InitSettings) {
 
     return null;
   }
-  const getSettings = () => {
-    return settings;
-  };
 
   log('debug', 'beginning to initialize all system lib modules');
   libModuleMap.set(LibModule.AUTH, require('../auth/Auth').default);
@@ -121,7 +118,6 @@ async function init(settings: InitSettings) {
     setHttpHeader,
     getLibModule,
     liveSyncOptions,
-    getSettings,
     nexus,
   };
 

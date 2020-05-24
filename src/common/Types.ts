@@ -13,13 +13,11 @@ export type ClientType = EnumLiteralsOf<typeof ClientType>;
 // tslint:disable-next-line: variable-name
 export const ClientType = Object.freeze({
   BROWSER: 'BROWSER',
-  CONSOLE: 'CONSOLE',
+  NODE: 'NODE',
 } as const);
 
 export type ClientConfig = {
   type: ClientType;
-  apiKey?: string;
-  getBearerToken?: () => Promise<string>;
 };
 
 export type ConnectionType = EnumLiteralsOf<typeof ConnectionType>;

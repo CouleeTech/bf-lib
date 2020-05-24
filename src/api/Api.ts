@@ -11,7 +11,6 @@ let lastAuthHeaders = -1;
 let cachedAuthHeaders: Record<string, string> = {};
 
 async function getAuthHeaders(): Promise<Record<string, any>> {
-  const settings = System.getSettings();
   if (process.env.NODE_ENV === 'test') {
     return {};
   }
@@ -31,10 +30,6 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
     'Content-Type': 'application/json;charset=UTF-8',
   };
 
-  if (settings.client.getBearerToken) {
-    const token = await settings.client.getBearerToken();
-    cachedAuthHeaders.Authorization = `Berer ${token}`;
-  }
   return cachedAuthHeaders;
 }
 

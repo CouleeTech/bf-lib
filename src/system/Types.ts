@@ -37,13 +37,12 @@ export interface SystemWrapper {
 }
 
 export interface SystemInstance {
+  nexus: Nexus;
   getHttpHeaders(): Record<string, string>;
   setHttpHeader(key: string, value: string): void;
   getEventBus(): EventBus;
   getLibModule: <T>(type: LibModule) => T;
   liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
-  nexus: Nexus;
-  getSettings: () => InitSettings;
 }
 
 export type System = SystemInstance & SystemWrapper;
