@@ -4,7 +4,7 @@
   "private": false,
   "description": "the standard client library for block-5 software",
   "scripts": {
-    "build": "rimraf lib && tsc -p tsconfig.build.json",
+    "build": "rimraf lib api auth common livesync module multitool system && tsc -p tsconfig.build.json",
     "commit": "git-cz",
     "check": "tsc -p tsconfig.check.json -noEmit",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",

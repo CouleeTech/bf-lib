@@ -1,5 +1,12 @@
 # compiled output
 /lib
+/api
+/auth
+/common
+/livesync
+/module
+/multitool
+/system
 /node_modules
 
 # logs

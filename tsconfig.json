@@ -15,7 +15,7 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "./lib",
+    "outDir": "./",
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": false,
