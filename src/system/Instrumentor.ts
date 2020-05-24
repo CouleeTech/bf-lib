@@ -214,7 +214,7 @@ function strMapToStrArr(map: Map<string, number>): string[] {
 
 /* ~~~ System Utils ~~~ */
 
-export function SetInstrumentorLogger(newLogger: (level: SystemLogLevel, message: any) => void) {
+export function SetInstrumentorLogger(newLogger: (level: SystemLogLevel, message: any) => void): void {
   logger('debug', 'replacing the instrumentor logger with a new one');
   if (typeof newLogger === 'function') {
     logger = newLogger;

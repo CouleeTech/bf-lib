@@ -67,7 +67,7 @@ function sanitizeUri(uri: string) {
   return uri.substr(i);
 }
 
-async function request<R = any, P = object, H = object>(
+async function request<R = any, P = Record<string, any>, H = Record<string, any>>(
   method: RequestMethod,
   uri: string,
   data?: P,
@@ -106,19 +106,35 @@ async function request<R = any, P = object, H = object>(
   return null;
 }
 
-function get<R = any, P = object, H = object>(uri: string, params?: P, headers?: H): Promise<Nullable<R>> {
+function get<R = any, P = Record<string, any>, H = Record<string, any>>(
+  uri: string,
+  params?: P,
+  headers?: H,
+): Promise<Nullable<R>> {
   return request<R, P, H>(GET, uri, params, headers);
 }
 
-function del<R = any, P = object, H = object>(uri: string, params?: P, headers?: H): Promise<Nullable<R>> {
+function del<R = any, P = Record<string, any>, H = Record<string, any>>(
+  uri: string,
+  params?: P,
+  headers?: H,
+): Promise<Nullable<R>> {
   return request<R, P, H>(DELETE, uri, params, headers);
 }
 
-function post<R = any, P = object, H = object>(uri: string, payload?: P, headers?: H): Promise<Nullable<R>> {
+function post<R = any, P = Record<string, any>, H = Record<string, any>>(
+  uri: string,
+  payload?: P,
+  headers?: H,
+): Promise<Nullable<R>> {
   return request<R, P, H>(POST, uri, payload, headers);
 }
 
-function put<R = any, P = object, H = object>(uri: string, payload?: P, headers?: H): Promise<Nullable<R>> {
+function put<R = any, P = Record<string, any>, H = Record<string, any>>(
+  uri: string,
+  payload?: P,
+  headers?: H,
+): Promise<Nullable<R>> {
   return request<R, P, H>(PUT, uri, payload, headers);
 }
 

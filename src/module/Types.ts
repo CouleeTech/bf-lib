@@ -14,6 +14,7 @@ import {
 } from 'bf-types';
 import { SearchOptions } from '../api/Types';
 import { Nullable, PartialExceptFor } from '../common';
+import type { ObjectType } from '../system/Types';
 
 type GeneratedProperties = {
   id: UUID;
@@ -30,8 +31,8 @@ export type InsertData<T extends IEntity> = Partial<Omit<T, GeneratedPropertyKey
 export interface ModuleEntity<T extends IEntity = IEntity> {
   get(id: UUID): Promise<Nullable<T>>;
   create(data: InsertData<T>): Promise<Nullable<T & IModuleLink>>;
-  delete<U extends object>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>>;
-  view<U extends object>(id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
+  delete<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>>;
+  view<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
 }
 
 export interface ExternalModuleEntity<T extends IEntity = IEntity> {
@@ -59,14 +60,14 @@ export interface ModuleInternal {
     data: InsertData<T>,
   ): Promise<Nullable<T & IModuleLink>>;
 
-  delete<T extends IEntity = IEntity, U extends object = object>(
+  delete<T extends IEntity = IEntity, U extends ObjectType = ObjectType>(
     domain: Domain,
     module: DomainModule,
     id: UUID,
     data?: U,
   ): Promise<Nullable<T & IModuleLink>>;
 
-  view<U extends object>(domain: Domain, module: DomainModule, id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
+  view<U extends ObjectType>(domain: Domain, module: DomainModule, id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
 
   /**
    * Create an object with access to external module APIs

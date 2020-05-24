@@ -16,7 +16,7 @@ import {
 import { Api } from '../api';
 import { SearchOptions } from '../api/Types';
 import { domainToUri, moduleToUri, Nullable, PartialExceptFor, toLowerCamel, validateDomainAndModule } from '../common';
-import System, { LibModule } from '../system';
+import System, { LibModule, ObjectType } from '../system';
 import { makeCallable } from '../system/Utils';
 import { ExternalModuleEntity, InsertData, Module, ModuleEntity } from './Types';
 
@@ -53,7 +53,7 @@ function baseCreate<T extends IEntity>(
   return api.post<T & IModuleLink>(uri, data);
 }
 
-function baseDelete<T extends IEntity, U extends object>(
+function baseDelete<T extends IEntity, U extends ObjectType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
@@ -64,7 +64,7 @@ function baseDelete<T extends IEntity, U extends object>(
   return api.post<T & IModuleLink>(uri, { ...data, id });
 }
 
-function baseView<U extends object>(
+function baseView<U extends ObjectType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
@@ -90,11 +90,11 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
     return baseCreate<T>(api, entityDomain, entityModule, data);
   }
 
-  function del<U extends object>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>> {
+  function del<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>> {
     return baseDelete<T, U>(api, entityDomain, entityModule, id, data);
   }
 
-  function view<U extends object>(id: UUID, data?: U): Promise<Nullable<IModuleLink>> {
+  function view<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<IModuleLink>> {
     return baseView<U>(api, entityDomain, entityModule, id, data);
   }
 
@@ -193,7 +193,7 @@ function internalCreate<T extends IEntity = IEntity>(
   return baseCreate<T>(System.getLibModule<Api>(LibModule.API), domain, module, data);
 }
 
-function internalDelete<T extends IEntity = IEntity, U extends object = object>(
+function internalDelete<T extends IEntity = IEntity, U extends ObjectType = ObjectType>(
   domain: Domain,
   module: DomainModule,
   id: UUID,
@@ -203,7 +203,7 @@ function internalDelete<T extends IEntity = IEntity, U extends object = object>(
   return baseDelete<T, U>(System.getLibModule<Api>(LibModule.API), domain, module, id, data);
 }
 
-function internalView<U extends object>(
+function internalView<U extends ObjectType>(
   domain: Domain,
   module: DomainModule,
   id: UUID,

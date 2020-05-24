@@ -4,12 +4,21 @@ import { proxyWrap } from '../system/Utils';
 import EventBusGenerator from './EventBus';
 import { SetInstrumentorLogger } from './Instrumentor';
 import Nexus from './Nexus';
-import { EventBus, InitSettings, LibModule, Lock, SystemInstance, SystemLogLevel, SystemWrapper } from './Types';
+import {
+  EventBus,
+  InitSettings,
+  LibModule,
+  Lock,
+  ObjectType,
+  SystemInstance,
+  SystemLogLevel,
+  SystemWrapper,
+} from './Types';
 
 let initialized = false;
 const seal = Symbol();
 
-function lock<T extends object>(obj: T, key: symbol): Lock<T> {
+function lock<T extends ObjectType>(obj: T, key: symbol): Lock<T> {
   const guard = Object.freeze({ key });
 
   function unlock(suppliedKey: symbol) {
@@ -26,7 +35,7 @@ function lock<T extends object>(obj: T, key: symbol): Lock<T> {
   return Object.freeze(unlock);
 }
 
-function sealModule<T extends object>(module: T): Lock<T> {
+function sealModule<T extends ObjectType>(module: T): Lock<T> {
   return lock<T>(module, seal);
 }
 

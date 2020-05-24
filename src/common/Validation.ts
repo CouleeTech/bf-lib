@@ -6,6 +6,6 @@ const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]
  *
  * @param email A value that should be an email address
  */
-export function isValidEmail(email: any) {
+export function isValidEmail(email?: string | null): boolean {
   return emailRegex.test(String(email));
 }

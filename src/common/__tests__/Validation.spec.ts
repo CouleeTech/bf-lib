@@ -33,7 +33,7 @@ describe('Validation', () => {
     ];
 
     for (const value of failValues) {
-      expect(isValidEmail(value)).toBeFalsy();
+      expect(isValidEmail(value as any)).toBeFalsy();
     }
   });
 });

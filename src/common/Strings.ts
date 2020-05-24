@@ -27,7 +27,7 @@ export function numberWithCommas(str: string): string {
   return str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export function formatDecimal(value: number, decimalPlaces: number | false = 2) {
+export function formatDecimal(value: number, decimalPlaces: number | false = 2): string {
   const rounded = formatFloat(value, decimalPlaces);
   const chunks = rounded.split('.');
   if (chunks.length < 2) {
@@ -98,7 +98,7 @@ export function moduleToUri(module: DomainModule): string {
   return uri;
 }
 
-export function validateDomainAndModule(domain: Domain, module: DomainModule) {
+export function validateDomainAndModule(domain: Domain, module: DomainModule): void {
   if (!DOMAINS[domain]) {
     throw new Error(`${domain} is not a valid Entity domain`);
   }

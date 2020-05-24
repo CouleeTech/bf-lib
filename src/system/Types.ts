@@ -3,6 +3,8 @@ import { ClientConfig, LiveSyncConfig, NexusConfig, Nullable } from '../common/T
 import { LiveSyncConnectionOptions } from '../livesync/Types';
 import { Nexus } from './Nexus';
 
+export type ObjectType = Record<string, any>;
+
 export type Lock<T> = (suppliedKey: symbol) => T;
 
 export type InitSettings = {
@@ -31,7 +33,7 @@ export interface SystemLogger {
 
 export interface SystemWrapper {
   init(settings: InitSettings): void;
-  sealModule<T extends object>(module: T): Lock<T>;
+  sealModule<T extends ObjectType>(module: T): Lock<T>;
 }
 
 export interface SystemInstance {

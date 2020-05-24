@@ -1,5 +1,6 @@
+import type { ObjectType } from './Types';
+
 type FunctionType = (...args: any[]) => any;
-type ObjectType = Record<string, any>;
 
 export function makeCallable<F extends FunctionType, O extends ObjectType>(func: F, object: O): F & O {
   Object.assign(func, object);
@@ -39,7 +40,7 @@ function intercept(wrapper: any) {
  * @param target The object what will be wrapped in a proxy
  * @param wrapper An optional object whose properties will be added to the proxy
  */
-export function proxyWrap<T extends object, W extends Record<string, any> | undefined = T>(
+export function proxyWrap<T extends ObjectType, W extends Record<string, any> | undefined = T>(
   target: Record<string, any>,
   wrapper?: W,
 ): [T, T & W] {
