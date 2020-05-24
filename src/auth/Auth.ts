@@ -48,7 +48,7 @@ async function getOrganizationDoc(): Promise<IOrganization> {
 }
 
 function logOut() {
-  System.nexus.logOut();
+  System.nexus.disconnect();
 }
 
 const auth: Auth = {

@@ -26,7 +26,7 @@ function lock<T extends ObjectType>(obj: T, key: symbol): Lock<T> {
     if (typeof keyRef === 'symbol' && guard.key === keyRef) {
       return obj;
     }
-    throw new Error('Illegal access to a protected object.');
+    throw new Error('illegal access to a protected object');
   }
 
   Object.defineProperty(unlock, 'name', { value: Symbol() });

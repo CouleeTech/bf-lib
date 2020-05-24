@@ -10,14 +10,16 @@ import { Api, SearchOptions } from './Types';
 let lastAuthHeaders = -1;
 let cachedAuthHeaders: Record<string, string> = {};
 
-async function getAuthHeaders(): Promise<Record<string, any>> {
+async function getAuthHeaders(useCachedHeaders = true): Promise<Record<string, any>> {
   if (process.env.NODE_ENV === 'test') {
     return {};
   }
 
   const timestamp = Date.now();
-  if (timestamp - lastAuthHeaders < 300000) {
-    return cachedAuthHeaders;
+  if (useCachedHeaders) {
+    if (timestamp - lastAuthHeaders < 300000) {
+      return cachedAuthHeaders;
+    }
   }
 
   lastAuthHeaders = timestamp;
@@ -33,12 +35,10 @@ async function getAuthHeaders(): Promise<Record<string, any>> {
   return cachedAuthHeaders;
 }
 
-function redirectToLogin() {
-  window.location.href = System.nexus.getLoginUrl(window.location.href);
-}
-
 function rejectedBecauseAuth(e: AxiosError) {
-  return e.response && e.response.status && (e.response.status === FORBIDDEN || e.response.status === UNAUTHORIZED);
+  return Boolean(
+    e.response && e.response.status && (e.response.status === FORBIDDEN || e.response.status === UNAUTHORIZED),
+  );
 }
 
 /**
@@ -67,7 +67,10 @@ async function request<R = any, P = Record<string, any>, H = Record<string, any>
   uri: string,
   data?: P,
   headers?: H,
+  canRetryAuth = true,
 ): Promise<Nullable<R>> {
+  let authFailed = false;
+
   const requestSettings: AxiosRequestConfig = {
     method,
     withCredentials: true,
@@ -81,20 +84,26 @@ async function request<R = any, P = Record<string, any>, H = Record<string, any>
     }
   }
 
-  const authHeaders = await getAuthHeaders();
+  const authHeaders = await getAuthHeaders(canRetryAuth);
   requestSettings.headers = { ...authHeaders, ...System.getHttpHeaders(), ...headers };
 
   try {
     const url = `${System.nexus.getUrl()}/${sanitizeUri(uri)}`;
     const response = (await Axios(url, requestSettings)) as AxiosResponse<R>;
-    if (!response.data) {
+    if (!response || !response.data) {
       return null;
     }
 
     return response.data;
   } catch (e) {
-    if (rejectedBecauseAuth(e)) {
-      redirectToLogin();
+    authFailed = rejectedBecauseAuth(e);
+  }
+
+  if (authFailed && canRetryAuth) {
+    // TODO: consider setting an amount of times to retry auth
+    const user = await System.nexus.reconnect();
+    if (user) {
+      return request<R, P, H>(method, uri, data, headers, false);
     }
   }
 

@@ -1,28 +1,31 @@
 import { IUserEntity } from 'bf-types';
-import { NexusConfig } from '../common';
+import { NexusConfig, Nullable } from '../common';
 import { ClientAuth, System } from './Types';
 
 export interface Nexus {
   getUrl(): string;
   getLoginUrl(returnUrl?: string): string;
   getUser(): IUserEntity;
-  logOut(): void;
+  disconnect(): void;
+  reconnect(): Promise<Nullable<IUserEntity>>;
 }
 
 type FirstStageNexus = Omit<Nexus, 'getUser'>;
 
 export default async function nexus(system: System, config: NexusConfig, clientAuth: ClientAuth): Promise<Nexus> {
+  let user: Nullable<IUserEntity> = null;
+
   let baseUrl = config.url;
   if (baseUrl[baseUrl.length - 1] === '/') {
     baseUrl = baseUrl.slice(0, -1);
   }
 
-  function logOut() {
-    clientAuth.disconnect(system);
-  }
-
   function getUrl() {
     return baseUrl;
+  }
+
+  function getUser() {
+    return user as IUserEntity;
   }
 
   function getLoginUrl(returnUrl?: string) {
@@ -33,25 +36,44 @@ export default async function nexus(system: System, config: NexusConfig, clientA
     return `${baseUrl}/login?returnUrl=${returnUrl}`;
   }
 
+  async function disconnect() {
+    await clientAuth.disconnect(system);
+    if (clientAuth.afterDisconnect) {
+      clientAuth.afterDisconnect(system);
+    }
+  }
+
+  async function reconnect(): Promise<Nullable<IUserEntity>> {
+    await disconnect();
+    const result = await clientAuth.reconnect(system);
+    if (!result) {
+      return null;
+    }
+
+    user = result;
+
+    if (clientAuth.afterConnect) {
+      clientAuth.afterConnect(system);
+    }
+
+    return result;
+  }
+
   const instance: FirstStageNexus = {
     getUrl,
     getLoginUrl,
-    logOut,
+    disconnect,
+    reconnect,
   };
 
   try {
-    const user = await clientAuth.connect(baseUrl);
-
+    user = await clientAuth.connect(baseUrl);
     if (!user) {
-      throw new Error('Was not able to authenticate the user.');
-    }
-
-    function getUser() {
-      return user as IUserEntity;
+      throw new Error('was not able to authenticate the user');
     }
 
     return Object.freeze({ ...instance, getUser });
   } catch (e) {
-    throw new Error(`Failed to establish a proper connection with a Nexus node. ${e.message}`);
+    throw new Error(`failed to establish a proper connection with a nexus node: ${e.message}`);
   }
 }

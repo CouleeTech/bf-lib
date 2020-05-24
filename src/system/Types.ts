@@ -60,6 +60,7 @@ export const LibModule = Object.freeze({
 export interface ClientAuth {
   connect(nexusUrl: string): Promise<Nullable<IUserEntity>> | Nullable<IUserEntity>;
   afterConnect?: (system: SystemInstance) => void;
+  afterDisconnect?: (system: SystemInstance) => void;
   reconnect(system: SystemInstance): Promise<Nullable<IUserEntity>> | Nullable<IUserEntity>;
   disconnect(system: SystemInstance): void;
 }
