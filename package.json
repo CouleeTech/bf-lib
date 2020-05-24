@@ -1,6 +1,6 @@
 {
   "name": "bf-lib",
-  "version": "1.11.3",
+  "version": "2.0.0",
   "private": false,
   "description": "the standard client library for block-5 software",
   "scripts": {
