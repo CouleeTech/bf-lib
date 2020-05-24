@@ -23,5 +23,6 @@
     "strictPropertyInitialization": false,
     "target": "es6"
   },
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules", "lib"],
+  "include": ["src"]
 }

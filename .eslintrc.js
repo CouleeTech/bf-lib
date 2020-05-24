@@ -7,10 +7,6 @@ module.exports = {
   extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
   ignorePatterns: [],
   parser: '@typescript-eslint/parser',
-  parserOptions: {
-    project: 'tsconfig.json',
-    sourceType: 'module',
-  },
   plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],
   rules: {
     '@typescript-eslint/adjacent-overload-signatures': 'error',
@@ -30,14 +26,8 @@ module.exports = {
           Function: {
             message: 'Avoid using the `Function` type. Prefer a specific function type, like `() => void`.',
           },
-          Boolean: {
-            message: 'Avoid using the `Boolean` type. Did you mean `boolean`?',
-          },
           Number: {
             message: 'Avoid using the `Number` type. Did you mean `number`?',
-          },
-          String: {
-            message: 'Avoid using the `String` type. Did you mean `string`?',
           },
           Symbol: {
             message: 'Avoid using the `Symbol` type. Did you mean `symbol`?',
@@ -186,14 +176,6 @@ module.exports = {
     ],
     'use-isnan': 'error',
     'valid-typeof': 'off',
-    '@typescript-eslint/tslint/config': [
-      'error',
-      {
-        rules: {
-          'prefer-conditional-expression': true,
-        },
-      },
-    ],
   },
   settings: {},
 };

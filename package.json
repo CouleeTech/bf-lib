@@ -2,23 +2,22 @@
   "name": "bf-lib",
   "version": "1.11.0",
   "private": false,
-  "description": "the standard client library for block-5 services",
+  "description": "the standard client library for block-5 software",
   "scripts": {
-    "build": "tsc -p tsconfig.build.json && cp -rf LICENSE README.md package.json lib/",
+    "build": "rimraf lib && tsc -p tsconfig.build.json",
     "commit": "git-cz",
     "check": "tsc -p tsconfig.check.json -noEmit",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
-    "lint": "eslint './src/**/*.{js,ts,tsx}' --fix || exit 0",
+    "lint": "eslint './src/**/*.{js,ts,tsx}' --fix",
     "postversion": "git push && git push --tags",
     "preversion": "npm run lint",
     "test": "jest",
     "test:cov": "jest --coverage",
     "version": "npm run format && git add -A src",
-    "patchpub": "npm version patch && npm run pub",
-    "minorpub": "npm version minor && npm run pub",
-    "majorpub": "npm version major && npm run pub",
-    "prepare": "test -d lib && exit 1 || exit 0",
-    "pub": "npm test && npm run lint && npm run build && cd lib && rm -f tsconfig.build.tsbuildinfo && npm publish"
+    "patchpub": "npm version patch && npm publish",
+    "minorpub": "npm version minor && npm publish",
+    "majorpub": "npm version major && npm publish",
+    "prepare": "npm test && npm run lint && npm run build"
   },
   "repository": {
     "type": "git",
@@ -97,6 +96,7 @@
     "jest": "^26.0.1",
     "lint-staged": "^10.2.2",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "ts-jest": "^25.5.1",
     "tslint": "^6.1.2",
     "typescript": "^3.8.3"
