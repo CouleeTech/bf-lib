@@ -10,6 +10,7 @@ import {
   IModuleLink,
   IRemoveCustomAttributeDTO,
   ISearchFilter,
+  ISearchQueryWithFiltersSimple,
   IUpdateCustomAttributeDTO,
   UUID,
 } from 'bf-types';
@@ -64,6 +65,20 @@ function baseDelete<T extends IEntity, U extends ObjectType>(
   return api.post<T & IModuleLink>(uri, { ...data, id });
 }
 
+async function baseSearch<T extends IEntity>(
+  api: Api,
+  domain: Domain,
+  module: DomainModule,
+  filters: ISearchFilter[],
+  options?: SearchOptions,
+): Promise<T[]> {
+  const domainUri = domainToUri(domain);
+  const moduleUri = moduleToUri(module);
+  const uri = `${domainUri}/${moduleUri}/search`;
+  const response = await api.put<T[], ISearchQueryWithFiltersSimple>(uri, { ...options, filters });
+  return response ? response : [];
+}
+
 function baseView<U extends ObjectType>(
   api: Api,
   domain: Domain,
@@ -94,6 +109,10 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
     return baseDelete<T, U>(api, entityDomain, entityModule, id, data);
   }
 
+  function search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]> {
+    return baseSearch<T>(api, entityDomain, entityModule, filters, options);
+  }
+
   function view<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<IModuleLink>> {
     return baseView<U>(api, entityDomain, entityModule, id, data);
   }
@@ -102,6 +121,7 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
     get,
     create,
     delete: del,
+    search,
     view,
   });
 }

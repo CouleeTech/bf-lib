@@ -32,6 +32,7 @@ export interface ModuleEntity<T extends IEntity = IEntity> {
   get(id: UUID): Promise<Nullable<T>>;
   create(data: InsertData<T>): Promise<Nullable<T & IModuleLink>>;
   delete<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>>;
+  search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]>;
   view<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<IModuleLink>>;
 }
 
