@@ -44,6 +44,17 @@ function baseGet<T extends IEntity>(api: Api, domain: Domain, module: DomainModu
   return api.get<T>(uri);
 }
 
+async function baseBulkCreate<T extends IEntity>(
+  api: Api,
+  domain: Domain,
+  module: DomainModule,
+  data: Array<InsertData<T>>,
+): Promise<Array<T & IModuleLink>> {
+  const bulkCreateUri = entityUri(domain, module, 'bulkCreate');
+  const response = await api.post<Array<T & IModuleLink>>(bulkCreateUri, data);
+  return response ? response : [];
+}
+
 function baseCreate<T extends IEntity>(
   api: Api,
   domain: Domain,
@@ -101,6 +112,10 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
     return baseGet<T>(api, entityDomain, entityModule, id);
   }
 
+  function bulkCreate(data: Array<InsertData<T>>): Promise<Array<T & IModuleLink>> {
+    return baseBulkCreate<T>(api, entityDomain, entityModule, data);
+  }
+
   function create(data: InsertData<T>): Promise<Nullable<T & IModuleLink>> {
     return baseCreate<T>(api, entityDomain, entityModule, data);
   }
@@ -119,6 +134,7 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
 
   return Object.freeze({
     get,
+    bulkCreate,
     create,
     delete: del,
     search,
@@ -132,6 +148,7 @@ const updateCustomAttributeUri = 'core/entity/external/customAttribute/modify';
 
 function external<T extends IEntity = any>(moduleName: string): ExternalModuleEntity<T> {
   const api = System.getLibModule<Api>(LibModule.API);
+  const bulkCreateUri = externalEntityUri(moduleName, 'bulkCreate');
   const createUri = externalEntityUri(moduleName, 'create');
   const updateUri = externalEntityUri(moduleName, 'update');
   const searchUri = 'search';
@@ -139,6 +156,11 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
   function get(id: UUID): Promise<Nullable<T>> {
     const uri = externalEntityUri(moduleName, id);
     return api.get<T>(uri);
+  }
+
+  async function bulkCreate(data: Array<InsertData<T>>): Promise<T[]> {
+    const response = await api.post<T[]>(bulkCreateUri, data);
+    return response ? response : [];
   }
 
   function create(data: InsertData<T>): Promise<Nullable<T>> {
@@ -186,6 +208,7 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
 
   return Object.freeze({
     get,
+    bulkCreate,
     create,
     update,
     search,

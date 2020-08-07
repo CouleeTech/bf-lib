@@ -30,6 +30,7 @@ export type InsertData<T extends IEntity> = Partial<Omit<T, GeneratedPropertyKey
 
 export interface ModuleEntity<T extends IEntity = IEntity> {
   get(id: UUID): Promise<Nullable<T>>;
+  bulkCreate(data: Array<InsertData<T>>): Promise<Array<T & IModuleLink>>;
   create(data: InsertData<T>): Promise<Nullable<T & IModuleLink>>;
   delete<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>>;
   search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]>;
