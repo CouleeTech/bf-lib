@@ -74,13 +74,16 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "bf-types": "^3.16.4",
     "decimal.js": "^10.2.0",
     "socket.io-client": "^2.3.0",
     "socket.io-msgpack-parser": "^2.2.0",
     "voca": "^1.4.0"
   },
+  "peerDependencies": {
+    "bf-types": "^3.16.4"
+  },
   "devDependencies": {
+    "bf-types": "^3.16.4",
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
     "@types/axios": "^0.14.0",
