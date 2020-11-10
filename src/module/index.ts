@@ -1,1 +1,1 @@
-export { Module } from './Types';
+export { Module, ModuleEntity } from './Types';

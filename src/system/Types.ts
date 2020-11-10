@@ -3,6 +3,7 @@ import { ClientConfig, LiveSyncConfig, NexusConfig, Nullable } from '../common/T
 import { LiveSyncConnectionOptions } from '../livesync/Types';
 import { Nexus } from './Nexus';
 
+export type HeadersType = Record<string, string>;
 export type ObjectType = Record<string, any>;
 
 export type Lock<T> = (suppliedKey: symbol) => T;

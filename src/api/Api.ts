@@ -1,14 +1,14 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Domain, DomainModule, ISearchFilter } from 'bf-types';
+import { Domain, DomainModule, SearchFilter } from 'bf-types';
 import { Auth } from '../auth';
 import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
-import System, { LibModule } from '../system';
+import System, { HeadersType, LibModule } from '../system';
 import { makeCallable } from '../system/Utils';
 import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_CLIENT_TZ, X_ORGANIZATION } from './Consts';
 import { Api, SearchOptions } from './Types';
 
 let lastAuthHeaders = -1;
-let cachedAuthHeaders: Record<string, string> = {};
+let cachedAuthHeaders: HeadersType = {};
 
 async function getAuthHeaders(useCachedHeaders = true): Promise<Record<string, any>> {
   if (process.env.NODE_ENV === 'test') {
@@ -62,7 +62,7 @@ function sanitizeUri(uri: string) {
   return uri.substr(i);
 }
 
-async function request<R = any, P = Record<string, any>, H = Record<string, any>>(
+async function request<R = any, P = Record<string, any>, H = HeadersType>(
   method: RequestMethod,
   uri: string,
   data?: P,
@@ -110,7 +110,7 @@ async function request<R = any, P = Record<string, any>, H = Record<string, any>
   return null;
 }
 
-function get<R = any, P = Record<string, any>, H = Record<string, any>>(
+function get<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   params?: P,
   headers?: H,
@@ -118,7 +118,7 @@ function get<R = any, P = Record<string, any>, H = Record<string, any>>(
   return request<R, P, H>(GET, uri, params, headers);
 }
 
-function del<R = any, P = Record<string, any>, H = Record<string, any>>(
+function del<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   params?: P,
   headers?: H,
@@ -126,7 +126,7 @@ function del<R = any, P = Record<string, any>, H = Record<string, any>>(
   return request<R, P, H>(DELETE, uri, params, headers);
 }
 
-function post<R = any, P = Record<string, any>, H = Record<string, any>>(
+function post<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   payload?: P,
   headers?: H,
@@ -134,7 +134,7 @@ function post<R = any, P = Record<string, any>, H = Record<string, any>>(
   return request<R, P, H>(POST, uri, payload, headers);
 }
 
-function put<R = any, P = Record<string, any>, H = Record<string, any>>(
+function put<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   payload?: P,
   headers?: H,
@@ -142,11 +142,11 @@ function put<R = any, P = Record<string, any>, H = Record<string, any>>(
   return request<R, P, H>(PUT, uri, payload, headers);
 }
 
-async function search<T = any, H = Record<string, any>>(
+async function search<T = any, H extends HeadersType = HeadersType>(
   domain: Domain,
   module: DomainModule,
-  filters: ISearchFilter[],
-  options?: SearchOptions & { headers?: H },
+  filters: SearchFilter[],
+  options?: SearchOptions<H>,
 ): Promise<T[]> {
   validateDomainAndModule(domain, module);
   const domainUri = domainToUri(domain);

@@ -14,26 +14,26 @@ import {
   INotEqualFilterValue,
   INotInListFilterValue,
   IRangeFilterValue,
-  ISearchFilter,
-  ISearchFilterConstraint,
   ITemporalDateRangeFilterValue,
   ModuleProperty,
+  SearchFilter,
+  SearchFilterConstraint,
   SearchFilterType,
   SearchFilterValuePrimitives,
   SearchFilterValueType,
 } from 'bf-types';
 
 export type SearchFilterPair = [string | ModuleProperty, SearchFilterValueType];
-export type PairOrFilter = ISearchFilter | SearchFilterPair;
+export type PairOrFilter = SearchFilter | SearchFilterPair;
 
-export function searchFilter(fieldName: string | ModuleProperty, fieldValue: SearchFilterValueType): ISearchFilter {
+export function searchFilter(fieldName: string | ModuleProperty, fieldValue: SearchFilterValueType): SearchFilter {
   return {
     field_name: fieldName,
     field_value: fieldValue,
   };
 }
 
-export function searchFilters(...filters: PairOrFilter[]): ISearchFilter[] {
+export function searchFilters(...filters: PairOrFilter[]): SearchFilter[] {
   return filters.map(searchFilterPairToObject);
 }
 
@@ -84,7 +84,7 @@ type Func<R> = (...args: any[]) => R;
 
 function makeFilter(type: SearchFilterType) {
   return <V extends SearchFilterValueType>() => <R extends Func<Omit<V, 'type'>> = Func<Omit<V, 'type'>>>(run: R) => {
-    return (fieldName: string | ModuleProperty, ...params: Args<R>): ISearchFilter => ({
+    return (fieldName: string | ModuleProperty, ...params: Args<R>): SearchFilter => ({
       field_name: fieldName,
       field_value: withType(type)(run(...params)),
     });
@@ -110,12 +110,12 @@ function fromRange(start: SearchFilterValuePrimitives, end: SearchFilterValuePri
 function fromTemporalRange(
   start: SearchFilterValuePrimitives,
   end: SearchFilterValuePrimitives,
-  constraint: ISearchFilterConstraint,
+  constraint: SearchFilterConstraint,
 ) {
   return { start, end, temporal_constraint: constraint };
 }
 
-function searchFilterPairToObject(filter: PairOrFilter): ISearchFilter {
+function searchFilterPairToObject(filter: PairOrFilter): SearchFilter {
   return Array.isArray(filter) ? searchFilter(filter[0], filter[1]) : filter;
 }
 

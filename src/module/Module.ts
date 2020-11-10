@@ -9,15 +9,14 @@ import {
   IEntity,
   IModuleLink,
   IRemoveCustomAttributeDTO,
-  ISearchFilter,
-  ISearchQueryWithFiltersSimple,
   IUpdateCustomAttributeDTO,
+  SearchFilter,
   UUID,
 } from 'bf-types';
 import { Api } from '../api';
-import { SearchOptions } from '../api/Types';
+import type { SearchOptions } from '../api/Types';
 import { domainToUri, moduleToUri, Nullable, PartialExceptFor, toLowerCamel, validateDomainAndModule } from '../common';
-import System, { LibModule, ObjectType } from '../system';
+import System, { HeadersType, LibModule, ObjectType } from '../system';
 import { makeCallable } from '../system/Utils';
 import { ExternalModuleEntity, InsertData, Module, ModuleEntity } from './Types';
 
@@ -39,66 +38,72 @@ function externalEntityUri(moduleName: string, text?: string) {
   return `core/entity/external/${moduleNameUri}`;
 }
 
-function baseGet<T extends IEntity>(api: Api, domain: Domain, module: DomainModule, id: UUID): Promise<Nullable<T>> {
+function baseGet<T extends IEntity, H extends HeadersType = HeadersType>(
+  api: Api,
+  domain: Domain,
+  module: DomainModule,
+  id: UUID,
+  headers?: H,
+): Promise<Nullable<T>> {
   const uri = entityUri(domain, module, id);
-  return api.get<T>(uri);
+  return api.get<T, undefined, H>(uri, undefined, headers);
 }
 
-async function baseBulkCreate<T extends IEntity>(
+async function baseBulkCreate<T extends IEntity, H extends HeadersType = HeadersType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
   data: Array<InsertData<T>>,
+  headers?: H,
 ): Promise<Array<T & IModuleLink>> {
   const bulkCreateUri = entityUri(domain, module, 'bulkCreate');
-  const response = await api.post<Array<T & IModuleLink>>(bulkCreateUri, data);
+  const response = await api.post<Array<T & IModuleLink>, Array<InsertData<T>>, H>(bulkCreateUri, data, headers);
   return response ? response : [];
 }
 
-function baseCreate<T extends IEntity>(
+function baseCreate<T extends IEntity, H extends HeadersType = HeadersType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
   data: InsertData<T>,
+  headers?: H,
 ): Promise<Nullable<T & IModuleLink>> {
   const uri = entityUri(domain, module, 'create');
-  return api.post<T & IModuleLink>(uri, data);
+  return api.post<T & IModuleLink, InsertData<T>, H>(uri, data, headers);
 }
 
-function baseDelete<T extends IEntity, U extends ObjectType>(
+function baseDelete<T extends IEntity, U extends ObjectType, H extends HeadersType = HeadersType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
   id: UUID,
   data?: U,
+  headers?: H,
 ): Promise<Nullable<T & IModuleLink>> {
   const uri = entityUri(domain, module, 'delete');
-  return api.post<T & IModuleLink>(uri, { ...data, id });
+  return api.post<T & IModuleLink>(uri, { ...data, id }, headers);
 }
 
-async function baseSearch<T extends IEntity>(
+function baseSearch<T extends IEntity, H extends HeadersType = HeadersType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
-  filters: ISearchFilter[],
-  options?: SearchOptions,
+  filters: SearchFilter[],
+  options?: SearchOptions<H>,
 ): Promise<T[]> {
-  const domainUri = domainToUri(domain);
-  const moduleUri = moduleToUri(module);
-  const uri = `${domainUri}/${moduleUri}/search`;
-  const response = await api.put<T[], ISearchQueryWithFiltersSimple>(uri, { ...options, filters });
-  return response ? response : [];
+  return api.search<T, H>(domain, module, filters, options);
 }
 
-function baseView<U extends ObjectType>(
+function baseView<U extends ObjectType, H extends HeadersType = HeadersType>(
   api: Api,
   domain: Domain,
   module: DomainModule,
   id: UUID,
   data?: U,
+  headers?: H,
 ): Promise<Nullable<IModuleLink>> {
   const uri = entityUri(domain, module, 'view');
-  return api.post<IModuleLink>(uri, { ...data, id });
+  return api.post<IModuleLink>(uri, { ...data, id }, headers);
 }
 
 function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): ModuleEntity<T> {
@@ -108,28 +113,45 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
 
   const api = System.getLibModule<Api>(LibModule.API);
 
-  function get(id: UUID): Promise<Nullable<T>> {
-    return baseGet<T>(api, entityDomain, entityModule, id);
+  function get<H extends HeadersType = HeadersType>(id: UUID, headers?: H): Promise<Nullable<T>> {
+    return baseGet<T, H>(api, entityDomain, entityModule, id, headers);
   }
 
-  function bulkCreate(data: Array<InsertData<T>>): Promise<Array<T & IModuleLink>> {
-    return baseBulkCreate<T>(api, entityDomain, entityModule, data);
+  function bulkCreate<H extends HeadersType = HeadersType>(
+    data: Array<InsertData<T>>,
+    headers?: H,
+  ): Promise<Array<T & IModuleLink>> {
+    return baseBulkCreate<T, H>(api, entityDomain, entityModule, data, headers);
   }
 
-  function create(data: InsertData<T>): Promise<Nullable<T & IModuleLink>> {
-    return baseCreate<T>(api, entityDomain, entityModule, data);
+  function create<H extends HeadersType = HeadersType>(
+    data: InsertData<T>,
+    headers?: H,
+  ): Promise<Nullable<T & IModuleLink>> {
+    return baseCreate<T, H>(api, entityDomain, entityModule, data, headers);
   }
 
-  function del<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<T & IModuleLink>> {
-    return baseDelete<T, U>(api, entityDomain, entityModule, id, data);
+  function del<U extends ObjectType, H extends HeadersType = HeadersType>(
+    id: UUID,
+    data?: U,
+    headers?: H,
+  ): Promise<Nullable<T & IModuleLink>> {
+    return baseDelete<T, U>(api, entityDomain, entityModule, id, data, headers);
   }
 
-  function search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]> {
-    return baseSearch<T>(api, entityDomain, entityModule, filters, options);
+  function search<H extends HeadersType = HeadersType>(
+    filters: SearchFilter[],
+    options?: SearchOptions<H>,
+  ): Promise<T[]> {
+    return baseSearch<T, H>(api, entityDomain, entityModule, filters, options);
   }
 
-  function view<U extends ObjectType>(id: UUID, data?: U): Promise<Nullable<IModuleLink>> {
-    return baseView<U>(api, entityDomain, entityModule, id, data);
+  function view<U extends ObjectType, H extends HeadersType = HeadersType>(
+    id: UUID,
+    data?: U,
+    headers?: H,
+  ): Promise<Nullable<IModuleLink>> {
+    return baseView<U, H>(api, entityDomain, entityModule, id, data, headers);
   }
 
   return Object.freeze({
@@ -171,7 +193,7 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
     return api.post<T>(updateUri, data);
   }
 
-  async function search(filters: ISearchFilter[], options?: SearchOptions): Promise<T[]> {
+  async function search(filters: SearchFilter[], options?: SearchOptions): Promise<T[]> {
     const response = await api.put<T[]>(searchUri, { ...options, filters, module_name: moduleName });
     return response ? response : [];
   }
