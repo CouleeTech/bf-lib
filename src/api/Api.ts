@@ -142,16 +142,16 @@ function put<R = any, P = Record<string, any>, H = Record<string, any>>(
   return request<R, P, H>(PUT, uri, payload, headers);
 }
 
-async function search<T = any>(
+async function search<T = any, H = Record<string, any>>(
   domain: Domain,
   module: DomainModule,
   filters: ISearchFilter[],
-  options?: SearchOptions,
+  options?: SearchOptions & { headers?: H },
 ): Promise<T[]> {
   validateDomainAndModule(domain, module);
   const domainUri = domainToUri(domain);
   const moduleUri = moduleToUri(module);
-  const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters });
+  const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters }, options?.headers);
   return response ? response : [];
 }
 
