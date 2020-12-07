@@ -51,9 +51,9 @@ export const exactMatchFilter = makeFilter(SearchFilterType.EXACT_MATCH)<IExactM
 
 export const greaterThanFilter = makeFilter(SearchFilterType.GREATER_THAN)<IGreaterThanFilterValue>()(fromPrimitive);
 
-export const greaterThanOrEqualFilter = makeFilter(SearchFilterType.GREATER_THAN_OR_EQUAL)<
-  IGreaterThanOrEqualFilterValue
->()(fromPrimitive);
+export const greaterThanOrEqualFilter = makeFilter(
+  SearchFilterType.GREATER_THAN_OR_EQUAL,
+)<IGreaterThanOrEqualFilterValue>()(fromPrimitive);
 
 export const inListFilter = makeFilter(SearchFilterType.IN_LIST)<IInListFilterValue>()(fromPrimitives);
 
@@ -65,9 +65,9 @@ export const lessThanOrEqualFilter = makeFilter(SearchFilterType.LESS_THAN_OR_EQ
 
 export const likeTextFilter = makeFilter(SearchFilterType.LIKE_TEXT)<ILikeTextFilterValue>()(fromString);
 
-export const notContainsInListFilter = makeFilter(SearchFilterType.NOT_CONTAINS_IN_LIST)<
-  INotContainsInListFilterValue
->()(fromPrimitives);
+export const notContainsInListFilter = makeFilter(
+  SearchFilterType.NOT_CONTAINS_IN_LIST,
+)<INotContainsInListFilterValue>()(fromPrimitives);
 
 export const notEqualFilter = makeFilter(SearchFilterType.NOT_EQUAL)<INotEqualFilterValue>()(fromPrimitive);
 
@@ -75,9 +75,9 @@ export const notInListFilter = makeFilter(SearchFilterType.NOT_IN_LIST)<INotInLi
 
 export const rangeFilter = makeFilter(SearchFilterType.RANGE)<IRangeFilterValue>()(fromRange);
 
-export const temporalDateRangeFilter = makeFilter(SearchFilterType.TEMPORAL_DATE_RANGE)<
-  ITemporalDateRangeFilterValue
->()(fromTemporalRange);
+export const temporalDateRangeFilter = makeFilter(
+  SearchFilterType.TEMPORAL_DATE_RANGE,
+)<ITemporalDateRangeFilterValue>()(fromTemporalRange);
 
 type Args<T> = T extends (...args: infer A) => any ? A : never;
 type Func<R> = (...args: any[]) => R;
