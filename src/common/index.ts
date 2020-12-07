@@ -1,3 +1,4 @@
+export * from './ConfigurableDate';
 export * from './DataGenerators';
 export * from './DomainModule';
 export * from './Strings';
