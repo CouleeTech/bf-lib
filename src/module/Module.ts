@@ -175,57 +175,72 @@ function external<T extends IEntity = any>(moduleName: string): ExternalModuleEn
   const updateUri = externalEntityUri(moduleName, 'update');
   const searchUri = 'search';
 
-  function get(id: UUID): Promise<Nullable<T>> {
+  function get<H extends HeadersType = HeadersType>(id: UUID, headers?: H): Promise<Nullable<T>> {
     const uri = externalEntityUri(moduleName, id);
-    return api.get<T>(uri);
+    return api.get<T>(uri, undefined, headers);
   }
 
-  async function bulkCreate(data: Array<InsertData<T>>): Promise<T[]> {
-    const response = await api.post<T[]>(bulkCreateUri, data);
+  async function bulkCreate<H extends HeadersType = HeadersType>(
+    data: Array<InsertData<T>>,
+    headers?: H,
+  ): Promise<T[]> {
+    const response = await api.post<T[]>(bulkCreateUri, data, headers);
     return response ? response : [];
   }
 
-  function create(data: InsertData<T>): Promise<Nullable<T>> {
-    return api.post<T>(createUri, data);
+  function create<H extends HeadersType = HeadersType>(data: InsertData<T>, headers?: H): Promise<Nullable<T>> {
+    return api.post<T>(createUri, data, headers);
   }
 
-  function update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>> {
-    return api.post<T>(updateUri, data);
+  function update<H extends HeadersType = HeadersType>(
+    data: PartialExceptFor<T, 'id'>,
+    headers?: H,
+  ): Promise<Nullable<T>> {
+    return api.post<T>(updateUri, data, headers);
   }
 
-  async function search(filters: SearchFilter[], options?: SearchOptions): Promise<T[]> {
+  async function search<H extends HeadersType = HeadersType>(
+    filters: SearchFilter[],
+    options?: SearchOptions<H>,
+  ): Promise<T[]> {
     const response = await api.put<T[]>(searchUri, { ...options, filters, module_name: moduleName });
     return response ? response : [];
   }
 
-  function addCustomAttribute<A>(
+  function addCustomAttribute<H extends HeadersType = HeadersType>(
     moduleId: UUID,
-    attribute: Omit<ICustomAttribute<A>, 'id'>,
+    attribute: Omit<ICustomAttribute, 'id'>,
+    headers?: H,
   ): Promise<Nullable<ICustomAttributeAddedDTO>> {
     const payload: IAddCustomAttributeDTO = {
       module: { module_name: moduleName, module_id: moduleId },
       custom_attribute: attribute,
     };
-    return api.post(addCustomAttributeUri, payload);
+    return api.post(addCustomAttributeUri, payload, headers);
   }
 
-  function removeCustomAttribute(moduleId: UUID, attributeId: UUID): Promise<Nullable<ICustomAttributeRemovedDTO>> {
+  function removeCustomAttribute<H extends HeadersType = HeadersType>(
+    moduleId: UUID,
+    attributeId: UUID,
+    headers?: H,
+  ): Promise<Nullable<ICustomAttributeRemovedDTO>> {
     const payload: IRemoveCustomAttributeDTO = {
       module: { module_name: moduleName, module_id: moduleId },
       custom_attribute_id: attributeId,
     };
-    return api.post(removeCustomAttributeUri, payload);
+    return api.post(removeCustomAttributeUri, payload, headers);
   }
 
-  function updateCustomAttribute<A>(
+  function updateCustomAttribute<H extends HeadersType = HeadersType>(
     moduleId: UUID,
-    attribute: PartialExceptFor<ICustomAttribute<A>, 'id'>,
+    attribute: PartialExceptFor<ICustomAttribute, 'id'>,
+    headers?: H,
   ): Promise<Nullable<ICustomAttributeUpdatedDTO>> {
     const payload: IUpdateCustomAttributeDTO = {
       module: { module_name: moduleName, module_id: moduleId },
       custom_attribute: attribute,
     };
-    return api.post(updateCustomAttributeUri, payload);
+    return api.post(updateCustomAttributeUri, payload, headers);
   }
 
   return Object.freeze({

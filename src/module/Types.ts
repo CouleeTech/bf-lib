@@ -49,19 +49,25 @@ export interface ModuleEntity<T extends IEntity = IEntity> {
 }
 
 export interface ExternalModuleEntity<T extends IEntity = IEntity> {
-  get(id: UUID): Promise<Nullable<T>>;
-  create(data: InsertData<T>): Promise<Nullable<T>>;
-  update(data: PartialExceptFor<T, 'id'>): Promise<Nullable<T>>;
-  search(filters: SearchFilter[], options?: SearchOptions): Promise<T[]>;
-  addCustomAttribute<A>(
+  get: <H extends HeadersType = HeadersType>(id: UUID, headers?: H) => Promise<Nullable<T>>;
+  create: <H extends HeadersType = HeadersType>(data: InsertData<T>, headers?: H) => Promise<Nullable<T>>;
+  update: <H extends HeadersType = HeadersType>(data: PartialExceptFor<T, 'id'>, headers?: H) => Promise<Nullable<T>>;
+  search: <H extends HeadersType = HeadersType>(filters: SearchFilter[], options?: SearchOptions<H>) => Promise<T[]>;
+  addCustomAttribute: <H extends HeadersType = HeadersType>(
     moduleId: UUID,
-    attribute: Omit<ICustomAttribute<A>, 'id'>,
-  ): Promise<Nullable<ICustomAttributeAddedDTO>>;
-  removeCustomAttribute(moduleId: UUID, attributeId: UUID): Promise<Nullable<ICustomAttributeRemovedDTO>>;
-  updateCustomAttribute<A>(
+    attribute: Omit<ICustomAttribute, 'id'>,
+    headers?: H,
+  ) => Promise<Nullable<ICustomAttributeAddedDTO>>;
+  removeCustomAttribute: <H extends HeadersType = HeadersType>(
     moduleId: UUID,
-    attribute: PartialExceptFor<ICustomAttribute<A>, 'id'>,
-  ): Promise<Nullable<ICustomAttributeUpdatedDTO>>;
+    attributeId: UUID,
+    headers?: H,
+  ) => Promise<Nullable<ICustomAttributeRemovedDTO>>;
+  updateCustomAttribute: <H extends HeadersType = HeadersType>(
+    moduleId: UUID,
+    attribute: PartialExceptFor<ICustomAttribute, 'id'>,
+    headers?: H,
+  ) => Promise<Nullable<ICustomAttributeUpdatedDTO>>;
 }
 
 export interface ModuleInternal {
