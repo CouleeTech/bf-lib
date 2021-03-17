@@ -4,7 +4,7 @@ module.exports = {
     es6: true,
     node: true,
   },
-  extends: ['plugin:@typescript-eslint/recommended', 'prettier/@typescript-eslint', 'plugin:prettier/recommended'],
+  extends: ['plugin:@typescript-eslint/recommended', 'prettier', 'plugin:prettier/recommended'],
   ignorePatterns: [],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],

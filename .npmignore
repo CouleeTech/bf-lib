@@ -15,6 +15,7 @@ tslint.json
 .tslintrc
 .eslintrc.json
 .eslintrc.js
+.husky
 
 # git
 .github
