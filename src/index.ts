@@ -1,38 +1,22 @@
 import { Api } from './api';
 import { Auth } from './auth';
-import { ClientConfig, ClientType, ConnectionType, LiveSyncConfig, NexusConfig } from './common';
-import { LiveEvent, LiveSync } from './livesync';
+import { ClientConfig, ClientType, NexusConfig } from './common';
 import { Module } from './module';
 import { Multitool } from './multitool';
 import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
 
-export {
-  Api,
-  Auth,
-  LiveSync,
-  Module,
-  LiveEvent,
-  ClientType,
-  ClientAuth,
-  ConnectionType,
-  ClientConfig,
-  NexusConfig,
-  LiveSyncConfig,
-  SystemInstance,
-};
+export { Api, Auth, Module, ClientType, ClientAuth, ClientConfig, NexusConfig, SystemInstance };
 
 export type ConfigSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
   auth: ClientAuth;
   logging: SystemLoggerOptions;
-  livesync?: LiveSyncConfig;
 };
 
 export interface BfLib {
   api: Api;
   auth: Auth;
-  livesync: LiveSync;
   module: Module;
   multitool: Multitool;
 }
@@ -45,9 +29,6 @@ export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
     },
     get auth() {
       return System.getLibModule<Auth>(LibModule.AUTH);
-    },
-    get livesync() {
-      return System.getLibModule<LiveSync>(LibModule.LIVESYNC);
     },
     get module() {
       return System.getLibModule<Module>(LibModule.MODULE);

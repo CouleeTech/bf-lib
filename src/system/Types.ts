@@ -1,6 +1,5 @@
 import { EnumLiteralsOf, IUserEntity } from 'bf-types';
-import { ClientConfig, LiveSyncConfig, NexusConfig, Nullable } from '../common/Types';
-import { LiveSyncConnectionOptions } from '../livesync/Types';
+import { ClientConfig, NexusConfig, Nullable } from '../common/Types';
 import { Nexus } from './Nexus';
 
 export type HeadersType = Record<string, string>;
@@ -13,7 +12,6 @@ export type InitSettings = {
   client: ClientConfig;
   auth: ClientAuth;
   logging: SystemLoggerOptions;
-  livesync?: LiveSyncConfig;
 };
 
 export type SystemLogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -43,7 +41,6 @@ export interface SystemInstance {
   setHttpHeader(key: string, value: string): void;
   getEventBus(): EventBus;
   getLibModule: <T>(type: LibModule) => T;
-  liveSyncOptions: () => Nullable<LiveSyncConnectionOptions>;
 }
 
 export type System = SystemInstance & SystemWrapper;
@@ -53,7 +50,6 @@ export type LibModule = EnumLiteralsOf<typeof LibModule>;
 export const LibModule = Object.freeze({
   API: Symbol('API'),
   AUTH: Symbol('AUTH'),
-  LIVESYNC: Symbol('LIVESYNC'),
   MODULE: Symbol('MODULE'),
   MULTITOOL: Symbol('MULTITOOL'),
 } as const);

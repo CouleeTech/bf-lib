@@ -1,5 +1,3 @@
-import { ConnectionType, Nullable } from '../common';
-import { LiveSyncConnectionOptions, LiveSyncConnectionType } from '../livesync/Types';
 import { proxyWrap } from '../system/Utils';
 import EventBusGenerator from './EventBus';
 import { SetInstrumentorLogger } from './Instrumentor';
@@ -70,7 +68,6 @@ async function init(settings: InitSettings) {
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(system, settings.nexus, settings.auth);
   const eventBus: EventBus = EventBusGenerator();
-  const liveSyncConnectionOptions = settings.livesync ? Object.freeze({ ...settings.livesync }) : null;
 
   function getEventBus(): EventBus {
     return eventBus;
@@ -92,22 +89,9 @@ async function init(settings: InitSettings) {
     return libModule(seal);
   }
 
-  function liveSyncOptions(): Nullable<LiveSyncConnectionOptions> {
-    if (!liveSyncConnectionOptions) {
-      return null;
-    }
-
-    if (liveSyncConnectionOptions.type === ConnectionType.ORGANIZATION) {
-      return { module_name: LiveSyncConnectionType.ORGANIZATION, module_id: nexus.getUser().organization[0] };
-    }
-
-    return null;
-  }
-
   log('debug', 'beginning to initialize all system lib modules');
   libModuleMap.set(LibModule.AUTH, require('../auth/Auth').default);
   libModuleMap.set(LibModule.API, require('../api/Api').default);
-  libModuleMap.set(LibModule.LIVESYNC, require('../livesync/LiveSync').default);
   libModuleMap.set(LibModule.MODULE, require('../module/Module').default);
   libModuleMap.set(LibModule.MULTITOOL, require('../multitool/Multitool').default);
   log('debug', 'finished initializing all system lib modules');
@@ -117,7 +101,6 @@ async function init(settings: InitSettings) {
     getHttpHeaders,
     setHttpHeader,
     getLibModule,
-    liveSyncOptions,
     nexus,
   };
 
