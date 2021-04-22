@@ -2,10 +2,23 @@ import { Api } from './api';
 import { Auth } from './auth';
 import { ClientConfig, ClientType, NexusConfig } from './common';
 import { Module } from './module';
+import { ExternalModuleEntity, InsertData, ModuleEntity } from './module/Types';
 import { Multitool } from './multitool';
 import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
 
-export { Api, Auth, Module, ClientType, ClientAuth, ClientConfig, NexusConfig, SystemInstance };
+export {
+  Api,
+  Auth,
+  Module,
+  ClientType,
+  ClientAuth,
+  ClientConfig,
+  NexusConfig,
+  SystemInstance,
+  InsertData,
+  ModuleEntity,
+  ExternalModuleEntity,
+};
 
 export type ConfigSettings = {
   nexus: NexusConfig;
