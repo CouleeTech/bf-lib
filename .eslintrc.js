@@ -120,7 +120,7 @@ module.exports = {
     ],
     'new-parens': 'off',
     'newline-per-chained-call': 'off',
-    'no-bitwise': 'error',
+    'no-bitwise': 'off',
     'no-caller': 'error',
     'no-cond-assign': 'error',
     'no-console': 'error',

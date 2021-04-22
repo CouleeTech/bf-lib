@@ -1,5 +1,5 @@
 import { EnumLiteralsOf, IUserEntity } from 'bf-types';
-import { ClientConfig, NexusConfig, Nullable } from '../common/Types';
+import { ClientConfig, NexusConfig, Nullable } from '../common/types';
 import { Nexus } from './Nexus';
 
 export type HeadersType = Record<string, string>;

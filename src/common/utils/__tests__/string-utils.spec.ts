@@ -7,7 +7,7 @@ import {
   toUpperCamel,
   toUpperFirstLetter,
   toUpperSnakeCase,
-} from '../Strings';
+} from '..';
 
 describe('Strings', () => {
   it('Should be able to convert strings to upper and lower snake case', () => {

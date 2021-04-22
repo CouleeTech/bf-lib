@@ -1,9 +1,4 @@
-import { DomainModule, EnumLiteralsOf } from 'bf-types';
-
-// TODO: Add more to this type as needed...
-export type ValidModuleName = DomainModule;
-
-export type Nullable<T> = T | null;
+import { EnumLiteralsOf } from 'bf-types';
 
 export type NexusConfig = {
   url: string;
@@ -19,5 +14,3 @@ export const ClientType = Object.freeze({
 export type ClientConfig = {
   type: ClientType;
 };
-
-export type PartialExceptFor<T, TRequired extends keyof T> = Partial<T> & Pick<T, TRequired>;

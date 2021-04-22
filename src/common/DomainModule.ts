@@ -1,6 +1,6 @@
 import { ALL_MODULES, Domain, DomainModule, DOMAINS, DOMAIN_MODULES } from 'bf-types';
-import { toDisplay, toLowerCamel } from './Strings';
-import { Nullable } from './Types';
+import { Nullable } from './types';
+import { toDisplay, toLowerCamel } from './utils';
 
 const domainUriMap: Map<Domain, string> = new Map();
 const moduleUriMap: Map<DomainModule, string> = new Map();
@@ -48,6 +48,25 @@ export function moduleToUri(moduleName: DomainModule): string {
 }
 
 /**
+ * Get the domain name associated with a particular module name
+ *
+ * @param moduleName The name of a block-5 module
+ */
+export function getModuleDomain(moduleName: DomainModule): Nullable<Domain> {
+  return moduleToDomainMap.get(moduleName) || null;
+}
+
+/**
+ * Get the base URI associated with a particular block-5 module name
+ *
+ * @param moduleName The name of a block-5 module
+ */
+export function getModuleBaseUri(moduleName: string, uri?: string): string {
+  const domainName = getModuleDomain(moduleName as DomainModule) as Domain;
+  return `${domainToUri(domainName)}/${moduleToUri(moduleName as DomainModule)}${uri ? `/${uri}` : ''}`;
+}
+
+/**
  * Ensure that both a domain name and module name are valid
  *
  * @param domainName The name of a block-5 domain
@@ -66,13 +85,4 @@ export function validateDomainAndModule(domainName: Domain, moduleName: DomainMo
   if (typeof domainModules[moduleName] !== 'string') {
     throw new Error(`${module} is not a module of the ${toDisplay(domainName)}`);
   }
-}
-
-/**
- * Get the domain name associated with a particular module name
- *
- * @param moduleName The name of a block-5 module
- */
-export function getModuleDomain(moduleName: DomainModule): Nullable<Domain> {
-  return moduleToDomainMap.get(moduleName) || null;
 }

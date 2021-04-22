@@ -1,6 +1,6 @@
 import { ALL_MODULES, DomainModuleLink, IModuleAssociation, IModuleLink, IRelatedModule, UUID } from 'bf-types';
-import { toUpperSnakeCase } from '../Strings';
-import { ValidModuleName } from '../Types';
+import { ValidModuleName } from '../types';
+import { toUpperSnakeCase } from '../utils';
 
 const EXTRA_MODULE_NAMES = Object.freeze(['PLACEHOLDER']);
 const VALID_MODULE_NAMES = Object.freeze([...EXTRA_MODULE_NAMES, ...Object.values(ALL_MODULES)]);
