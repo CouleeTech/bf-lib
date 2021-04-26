@@ -1,5 +1,4 @@
-// @ts-ignore
-import * as deepEqual from 'deep-equal';
+import deepEqual from 'deep-equal';
 
 // eslint-disable-next-line max-len
 const emailRegex = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
