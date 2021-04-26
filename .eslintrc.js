@@ -9,6 +9,7 @@ module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', '@typescript-eslint/tslint'],
   rules: {
+    '@typescript-eslint/ban-ts-comment': 'warn',
     '@typescript-eslint/adjacent-overload-signatures': 'error',
     '@typescript-eslint/array-type': [
       'error',
