@@ -20,6 +20,7 @@
     "sourceMap": false,
     "strict": true,
     "strictPropertyInitialization": false,
+    // Must be es6 or earilier, or else storybook dies :(
     "target": "es6",
     "esModuleInterop": true
   },
