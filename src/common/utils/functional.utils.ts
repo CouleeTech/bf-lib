@@ -22,14 +22,28 @@ export function getField<K extends PropertyKey>(field: K) {
  *
  * @param field The name of a property for an object type.
  */
+
 export function removeField<K extends PropertyKey>(field: K) {
+  return <T extends Partial<Record<K, unknown>>>(obj: T): Omit<T, K> => {
+    const good: any = {};
+    const objAny = obj as any;
+    for (const key of Object.keys(obj)) {
+      if (field !== key) {
+        good[key] = objAny[key];
+      }
+    }
+    return good as Omit<T, K>;
+  };
+}
+
+/* export function removeField<K extends PropertyKey>(field: K) {
   return <T extends Partial<Record<K, unknown>>>(obj: T): Omit<T, K> =>
     Object.fromEntries(
       Object.keys(obj)
         .filter(notEquals<PropertyKey>(field))
         .map((field) => [field, obj[field as keyof typeof obj]]),
     ) as Omit<T, K>;
-}
+}*/
 
 export const removeId = removeField('id');
 
@@ -49,8 +63,17 @@ export function addField<K extends PropertyKey>(field: K) {
  * @param fields A list of property names for an object type.
  */
 export function getFields<K extends PropertyKey>(...fields: K[]) {
-  return <T extends Record<K, unknown>>(obj: T): Pick<T, K> =>
-    Object.fromEntries(fields.map((field) => [field, obj[field]])) as Pick<T, K>;
+  return <T extends Record<K, unknown>>(obj: T): Pick<T, K> => {
+    const good2: any = {};
+    const obj2: any = obj;
+    const fiedls2: any[] = fields;
+    for (const key of Object.keys(obj2) as any[]) {
+      if (fiedls2.includes(key)) {
+        good2[key] = obj2[key];
+      }
+    }
+    return good2 as Pick<T, K>;
+  };
 }
 
 /**
