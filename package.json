@@ -1,6 +1,6 @@
 {
   "name": "bf-lib",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "private": false,
   "description": "the standard client library for block-5 software",
   "scripts": {
@@ -10,7 +10,7 @@
     "clean": "rimraf index.js index.d.ts lib api auth common livesync module multitool system",
     "commit": "git-cz",
     "format": "prettier --write \"src/**/*.{ts,js,json}\"",
-    "lint": "eslint './src/**/*.{js,ts,tsx}' --fix",
+    "lint": "eslint \"./src/**/*.{js,ts,tsx}\" --fix",
     "lint-staged": "lint-staged",
     "postversion": "git push && git push --tags",
     "prepare": "husky install && npm test && npm run lint && npm run build:clean",
