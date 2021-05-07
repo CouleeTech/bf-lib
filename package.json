@@ -16,6 +16,7 @@
     "prepare": "husky install && npm test && npm run lint && npm run build:clean",
     "preversion": "npm run lint",
     "test": "jest",
+    "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "version": "npm run format && git add -A src",
     "patchpub": "npm version patch && npm publish",
@@ -67,6 +68,7 @@
     "testEnvironment": "node"
   },
   "dependencies": {
+    "@timwoods/handlebars": "^2.0.5",
     "axios": "^0.21.0",
     "decimal.js": "^10.2.1",
     "deep-equal": "^2.0.5",
@@ -74,7 +76,7 @@
     "voca": "^1.4.0"
   },
   "peerDependencies": {
-    "bf-types": "^4.39.0"
+    "bf-types": "^5.3.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
@@ -88,7 +90,7 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "bf-types": "^4.39.0",
+    "bf-types": "5.3.3",
     "commitizen": "^4.2.2",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
