@@ -3,6 +3,8 @@ import { EntityFormDataContextDTO } from 'bf-types';
 export const defaultContext: EntityFormDataContextDTO = {
   actor: {
     id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
+    module_id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
+    module_name: 'USER',
     title: 'John Doe',
     first_name: 'John',
     last_name: 'Doe',
@@ -200,9 +202,11 @@ export const defaultContext: EntityFormDataContextDTO = {
   },
   creator: {
     id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
-    title: 'John Doe',
-    first_name: 'John',
-    last_name: 'Doe',
+    module_id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
+    module_name: 'USER',
+    title: 'Bill Smith',
+    first_name: 'Bill',
+    last_name: 'Smith',
     created_date: '2019-12-14T07:09:21.372Z',
     updated_date: '2021-05-05T16:04:19.886Z',
     status: 'READY',
