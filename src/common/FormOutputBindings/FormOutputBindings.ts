@@ -4,6 +4,7 @@ import {
   FormData,
   FormDataDoc,
   FormOutputBinding,
+  FormOutputBindings,
   IModuleLink,
   MODULES,
 } from 'bf-types';
@@ -39,6 +40,20 @@ export const resolveOutputBindingValue = (
       return binding.value;
   }
 };
+export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBindings) => {
+  const clean: FormOutputBindings = {};
+  for (const key of Object.keys(formTemplate)) {
+    clean[key.replace(/,/g, '.')] = formTemplate[key];
+  }
+  return clean;
+};
+export const convertToTemplateBidningFromDb = (formTemplate: FormOutputBindings) => {
+  const clean: FormOutputBindings = {};
+  for (const key of Object.keys(formTemplate)) {
+    clean[key.replace(/\./g, ',')] = formTemplate[key];
+  }
+  return clean;
+};
 
 export const formTemplateToChanges = (
   form_data: FormData,
@@ -47,7 +62,7 @@ export const formTemplateToChanges = (
 ): Changes[] => {
   const fullContext = { ...context, form_data };
   const changes: Changes[] = [];
-  const { form_output_bindings } = formTemplate;
+  const form_output_bindings = convertFormTemplateBindingFromDb(formTemplate.form_output_bindings);
   const entity: Changes = {
     module: {
       module_name: context.entity?.module_name || formTemplate.linked_module_name,

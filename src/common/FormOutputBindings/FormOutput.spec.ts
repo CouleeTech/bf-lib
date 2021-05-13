@@ -12,7 +12,7 @@ describe('Form Bindings formTemplateToChanges', () => {
       {
         linked_module_name: 'TASK_MANAGEMENT',
         form_output_bindings: {
-          'entity.form_data.TEST_THING': {
+          'entity,form_data,TEST_THING': {
             type: 'VALUE',
             value: 10,
           },
