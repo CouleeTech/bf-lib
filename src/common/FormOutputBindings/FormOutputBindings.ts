@@ -102,9 +102,8 @@ export const formTemplateToChanges = (
         break;
     }
   }
-  if (Object.keys(entity.changes).length !== 0) {
-    changes.push(entity);
-  }
+
+  changes.push(entity);
   if (Object.keys(actor.changes).length !== 0) {
     changes.push(actor);
   }

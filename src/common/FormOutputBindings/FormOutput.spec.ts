@@ -23,6 +23,14 @@ describe('Form Bindings formTemplateToChanges', () => {
     expect(changes.length).toEqual(1);
     expect(entityModule?.changes['form_data.TEST_THING']).toEqual(10);
   });
+  it('has default form', () => {
+    const changes = formTemplateToChanges(
+      { cool: 'thing' },
+      { ...defaultContext },
+      { linked_module_name: 'TASK_MANAGEMENT', form_output_bindings: {} },
+    );
+    expect(changes.length).toEqual(1);
+  });
 });
 
 describe('Form Bindings resolveOutputBindingValue', () => {
