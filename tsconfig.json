@@ -7,7 +7,6 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "incremental": true,
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -15,12 +14,16 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "./lib",
+    "outDir": ".",
     "preserveConstEnums": true,
     "removeComments": false,
     "sourceMap": false,
     "strict": true,
-    "target": "es6"
+    "strictPropertyInitialization": false,
+    // Must be es6 or earilier, or else storybook dies :(
+    "target": "es6",
+    "esModuleInterop": true
   },
-  "exclude": ["node_modules", "lib"]
+  "exclude": ["node_modules"],
+  "include": ["src"]
 }

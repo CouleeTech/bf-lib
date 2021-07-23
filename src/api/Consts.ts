@@ -6,6 +6,7 @@ export const DELETE = 'delete';
 export type RequestMethod = typeof GET | typeof POST | typeof PUT | typeof DELETE;
 
 export const X_ORGANIZATION = 'X-Organization';
+export const X_CLIENT_TZ = 'X-Client-Tz';
 
 export const OK = 200;
 export const CREATED = 201;

@@ -4,14 +4,18 @@ coverage
 tscache
 
 # configs
+commitlint.config.js
 tsconfig.json
 tsconfig.build.json
+tsconfig.check.json
 tsconfig.build.tsbuildinfo
 tslint.json
 .editorconfig
 .prettierrc
 .tslintrc
 .eslintrc.json
+.eslintrc.js
+.husky
 
 # git
 .github

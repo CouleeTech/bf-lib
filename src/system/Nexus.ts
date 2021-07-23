@@ -1,15 +1,20 @@
 import { IUserEntity } from 'bf-types';
-import { ClientConfig, ClientType, NexusConfig, Nullable } from '../common';
+import { NexusConfig, Nullable } from '../common';
+import { ClientAuth, System } from './Types';
 
 export interface Nexus {
   getUrl(): string;
   getLoginUrl(returnUrl?: string): string;
   getUser(): IUserEntity;
+  disconnect(): void;
+  reconnect(): Promise<Nullable<IUserEntity>>;
 }
 
 type FirstStageNexus = Omit<Nexus, 'getUser'>;
 
-export default async function nexus(config: NexusConfig, client: ClientConfig): Promise<Nexus> {
+export default async function nexus(system: System, config: NexusConfig, clientAuth: ClientAuth): Promise<Nexus> {
+  let user: Nullable<IUserEntity> = null;
+
   let baseUrl = config.url;
   if (baseUrl[baseUrl.length - 1] === '/') {
     baseUrl = baseUrl.slice(0, -1);
@@ -17,6 +22,10 @@ export default async function nexus(config: NexusConfig, client: ClientConfig): 
 
   function getUrl() {
     return baseUrl;
+  }
+
+  function getUser() {
+    return user as IUserEntity;
   }
 
   function getLoginUrl(returnUrl?: string) {
@@ -27,70 +36,44 @@ export default async function nexus(config: NexusConfig, client: ClientConfig): 
     return `${baseUrl}/login?returnUrl=${returnUrl}`;
   }
 
+  async function disconnect() {
+    await clientAuth.disconnect(system);
+    if (clientAuth.afterDisconnect) {
+      clientAuth.afterDisconnect(system);
+    }
+  }
+
+  async function reconnect(): Promise<Nullable<IUserEntity>> {
+    await disconnect();
+    const result = await clientAuth.reconnect(system);
+    if (!result) {
+      return null;
+    }
+
+    user = result;
+
+    if (clientAuth.afterConnect) {
+      clientAuth.afterConnect(system);
+    }
+
+    return result;
+  }
+
   const instance: FirstStageNexus = {
     getUrl,
     getLoginUrl,
+    disconnect,
+    reconnect,
   };
 
   try {
-    const user = await authenticate(instance, client);
-
+    user = await clientAuth.connect(baseUrl);
     if (!user) {
-      throw new Error('Was not able to authenticate the user.');
-    }
-
-    function getUser() {
-      return user as IUserEntity;
+      throw new Error('was not able to authenticate the user');
     }
 
     return Object.freeze({ ...instance, getUser });
   } catch (e) {
-    throw new Error(`Failed to establish a proper connection with a Nexus node. ${e.message}`);
+    throw new Error(`failed to establish a proper connection with a nexus node: ${e.message}`);
   }
-}
-
-async function authenticate(instance: FirstStageNexus, client: ClientConfig) {
-  if (client.type === ClientType.BROWSER) {
-    return authenticateBrowserClient(instance, client);
-  } else if (client.type === ClientType.CONSOLE) {
-    throw new Error(`Console clients aren't available yet.`);
-  }
-
-  throw new Error(`${client.type} is not a valid type of client to use with bf-lib.`);
-}
-
-async function authenticateBrowserClient(
-  instance: FirstStageNexus,
-  client: ClientConfig,
-): Promise<Nullable<IUserEntity>> {
-  if (typeof window === 'undefined') {
-    throw new Error('Tried to authenticate as browser client outside of a browser.');
-  }
-
-  if (client.apiKey) {
-    throw new Error('API keys are not allowed when using a browser client.');
-  }
-
-  const logInUrl = instance.getLoginUrl(window.location.href);
-  const userUrl = `${instance.getUrl()}/user`;
-  const requestOptions = { method: 'GET', credentials: 'include' };
-
-  const response = await fetch(userUrl, requestOptions as RequestInit);
-
-  if (response.url) {
-    if (response.status === 403 || response.status === 401) {
-      window.location.href = logInUrl;
-      return new Promise(_ => {
-        setTimeout(() => null, 10000);
-      });
-    } else if (response.ok) {
-      const userData = await response.json();
-      return userData as IUserEntity;
-    }
-  }
-
-  window.location.href = logInUrl;
-  return new Promise(_ => {
-    setTimeout(() => null, 10000);
-  });
 }

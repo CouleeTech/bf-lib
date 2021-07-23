@@ -1,9 +1,4 @@
-import { DomainModule, EnumLiteralsOf } from 'bf-types';
-
-// TODO: Add more to this type as needed...
-export type ValidModuleName = DomainModule;
-
-export type Nullable<T> = T | null;
+import { EnumLiteralsOf } from 'bf-types';
 
 export type NexusConfig = {
   url: string;
@@ -13,10 +8,9 @@ export type ClientType = EnumLiteralsOf<typeof ClientType>;
 // tslint:disable-next-line: variable-name
 export const ClientType = Object.freeze({
   BROWSER: 'BROWSER',
-  CONSOLE: 'CONSOLE',
+  NODE: 'NODE',
 } as const);
 
 export type ClientConfig = {
   type: ClientType;
-  apiKey?: string;
 };

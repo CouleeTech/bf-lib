@@ -1,19 +1,40 @@
 import { Api } from './api';
 import { Auth } from './auth';
-import { ClientConfig, NexusConfig } from './common';
-import System, { LibModule } from './system';
+import { ClientConfig, ClientType, NexusConfig } from './common';
+import { Module } from './module';
+import { ExternalModuleEntity, InsertData, ModuleEntity } from './module/Types';
+import { Multitool } from './multitool';
+import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
+
+export {
+  Api,
+  Auth,
+  Module,
+  ClientType,
+  ClientAuth,
+  ClientConfig,
+  NexusConfig,
+  SystemInstance,
+  InsertData,
+  ModuleEntity,
+  ExternalModuleEntity,
+};
 
 export type ConfigSettings = {
   nexus: NexusConfig;
   client: ClientConfig;
+  auth: ClientAuth;
+  logging: SystemLoggerOptions;
 };
 
-export interface Lib {
+export interface BfLib {
   api: Api;
   auth: Auth;
+  module: Module;
+  multitool: Multitool;
 }
 
-export default async function bflib(settings: ConfigSettings): Promise<Lib> {
+export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
   await System.init(settings);
   return Object.freeze({
     get api() {
@@ -21,6 +42,12 @@ export default async function bflib(settings: ConfigSettings): Promise<Lib> {
     },
     get auth() {
       return System.getLibModule<Auth>(LibModule.AUTH);
+    },
+    get module() {
+      return System.getLibModule<Module>(LibModule.MODULE);
+    },
+    get multitool() {
+      return System.getLibModule<Multitool>(LibModule.MULTITOOL);
     },
   });
 }

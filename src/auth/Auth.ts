@@ -1,21 +1,14 @@
-import { CORE_MODULES, IModuleLink, IUser, IUserEntity } from 'bf-types';
+import { CORE_MODULES, IModuleLink, IOrganization, IUser, IUserEntity } from 'bf-types';
 import { Api } from '../api';
-import { moduleLink, Nullable } from '../common';
+import { moduleLink } from '../common';
 import System, { LibModule } from '../system';
 import { Auth } from './Types';
-
-let userDoc: Nullable<IUser> = null;
-let userDocs: Nullable<IUser[]> = null;
 
 async function getUser(): Promise<IUserEntity> {
   return System.nexus.getUser();
 }
 
 async function getUserDoc(): Promise<IUser> {
-  if (userDoc) {
-    return userDoc;
-  }
-
   const api = System.getLibModule<Api>(LibModule.API);
   const userId = System.nexus.getUser().sub;
   const user = await api.get<IUser>(`core/user/entity/${userId}`);
@@ -24,15 +17,10 @@ async function getUserDoc(): Promise<IUser> {
     throw new Error('Failed to retrieve the document for the authenticated user.');
   }
 
-  userDoc = user;
   return user;
 }
 
 async function getUserDocs(): Promise<IUser[]> {
-  if (userDocs) {
-    return userDocs;
-  }
-
   const api = System.getLibModule<Api>(LibModule.API);
   const users = await api.get<IUser[]>('users');
 
@@ -40,7 +28,6 @@ async function getUserDocs(): Promise<IUser[]> {
     return [];
   }
 
-  userDocs = users;
   return users;
 }
 
@@ -48,11 +35,29 @@ async function getOrganization(): Promise<IModuleLink> {
   return moduleLink(CORE_MODULES.ORGANIZATION, System.nexus.getUser().organization[0]);
 }
 
+async function getOrganizationDoc(): Promise<IOrganization> {
+  const api = System.getLibModule<Api>(LibModule.API);
+  const organizationId = System.nexus.getUser().organization[0];
+  const organization = await api.get<IOrganization>(`core/organization/entity/${organizationId}`);
+
+  if (!organization) {
+    throw new Error("failed to retrieve the document for the authenticated user's organization");
+  }
+
+  return organization;
+}
+
+function logOut() {
+  System.nexus.disconnect();
+}
+
 const auth: Auth = {
   getUser,
   getUserDoc,
   getUserDocs,
+  getOrganizationDoc,
   getOrganization,
+  logOut,
 };
 
-export default Object.freeze(auth);
+export default System.sealModule(Object.freeze(auth));

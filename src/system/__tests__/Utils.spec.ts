@@ -7,7 +7,7 @@ describe('Utils', () => {
       count++;
     }
 
-    const [target, proxy] = proxyWrap({}, { wrapperUtil });
+    const [target, proxy] = proxyWrap<any>({}, { wrapperUtil });
 
     expect(target).toBeTruthy();
     expect(proxy).toBeTruthy();
