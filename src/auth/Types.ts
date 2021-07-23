@@ -1,4 +1,4 @@
-import { IModuleLink, IOrganization, IUser, IUserEntity } from 'bf-types';
+import { IModuleLink, IOrganization, IParticipant, IUser, IUserEntity, TSecurityTypes } from 'bf-types';
 
 export interface Auth {
   getUser(): Promise<IUserEntity>;
@@ -6,5 +6,6 @@ export interface Auth {
   getUserDocs(): Promise<IUser[]>;
   getOrganization(): Promise<IModuleLink>;
   getOrganizationDoc(): Promise<IOrganization>;
+  hasPermissions(participants: IParticipant[], securityLevel: TSecurityTypes, ...validModules: IModuleLink[]): boolean;
   logOut(): void;
 }

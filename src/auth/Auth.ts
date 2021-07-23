@@ -1,4 +1,14 @@
-import { CORE_MODULES, IModuleLink, IOrganization, IUser, IUserEntity } from 'bf-types';
+import {
+  CORE_MODULES,
+  IModuleLink,
+  IOrganization,
+  IParticipant,
+  IUser,
+  IUserEntity,
+  ScopeDefinition,
+  TParticipantScope,
+  TSecurityTypes,
+} from 'bf-types';
 import { Api } from '../api';
 import { moduleLink } from '../common';
 import System, { LibModule } from '../system';
@@ -47,6 +57,35 @@ async function getOrganizationDoc(): Promise<IOrganization> {
   return organization;
 }
 
+function hasPermissions(
+  participants: IParticipant[],
+  securityLevel: TSecurityTypes,
+  ...validModules: IModuleLink[]
+): boolean {
+  let state = false;
+  const scopes: TParticipantScope[] = [];
+  const validModuleIds = validModules.map((m) => m.module_id);
+
+  for (const participant of participants) {
+    if (validModuleIds.includes(participant.module_id)) {
+      scopes.push(...participant.scopes);
+    }
+  }
+
+  for (const scope of scopes) {
+    // if disallows, return immediately
+    if (ScopeDefinition[scope].disallows.indexOf(securityLevel) !== -1) {
+      return false;
+    }
+    // if allowed set state to true, but continue looking, in case a scope disallows it, Disallows trumps allows
+    if (ScopeDefinition[scope].allows.indexOf(securityLevel) !== -1) {
+      state = true;
+    }
+  }
+
+  return state;
+}
+
 function logOut() {
   System.nexus.disconnect();
 }
@@ -57,6 +96,7 @@ const auth: Auth = {
   getUserDocs,
   getOrganizationDoc,
   getOrganization,
+  hasPermissions,
   logOut,
 };
 
