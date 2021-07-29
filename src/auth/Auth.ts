@@ -9,10 +9,11 @@ import {
   TParticipantScope,
   TSecurityTypes,
 } from 'bf-types';
-import { Api } from '../api';
-import { moduleLink } from '../common';
 import System, { LibModule } from '../system';
+
+import { Api } from '../api';
 import { Auth } from './Types';
+import { moduleLink } from '../common';
 
 async function getUser(): Promise<IUserEntity> {
   return System.nexus.getUser();
@@ -57,7 +58,7 @@ async function getOrganizationDoc(): Promise<IOrganization> {
   return organization;
 }
 
-function hasPermissions(
+export function hasPermissions(
   participants: IParticipant[],
   securityLevel: TSecurityTypes,
   ...validModules: IModuleLink[]

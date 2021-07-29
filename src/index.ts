@@ -1,10 +1,11 @@
-import { Api } from './api';
-import { Auth } from './auth';
+import { Auth, hasPermissions } from './auth';
 import { ClientConfig, ClientType, NexusConfig } from './common';
-import { Module } from './module';
 import { ExternalModuleEntity, InsertData, ModuleEntity } from './module/Types';
-import { Multitool } from './multitool';
 import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
+
+import { Api } from './api';
+import { Module } from './module';
+import { Multitool } from './multitool';
 
 export {
   Api,
@@ -18,6 +19,7 @@ export {
   InsertData,
   ModuleEntity,
   ExternalModuleEntity,
+  hasPermissions,
 };
 
 export type ConfigSettings = {
