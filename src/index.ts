@@ -29,6 +29,7 @@ export interface BfLib {
   auth: Auth;
   module: Module;
   multitool: Multitool;
+  protected: (impersonate: InitSettings['impersonate']) => Promise<BfLib>;
 }
 
 export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
@@ -46,7 +47,7 @@ export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
     get multitool() {
       return System.getLibModule<Multitool>(LibModule.MULTITOOL);
     },
-    async protected(impersonate: ConfigSettings['impersonate']): Promise<BfLib> {
+    async protected(impersonate): Promise<BfLib> {
       return bflib({ ...settings, impersonate, protected: true });
     },
   });
