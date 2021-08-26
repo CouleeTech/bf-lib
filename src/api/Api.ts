@@ -85,7 +85,8 @@ async function request<R = any, P = Record<string, any>, H = HeadersType>(
   }
 
   const authHeaders = await getAuthHeaders(canRetryAuth);
-  requestSettings.headers = { ...authHeaders, ...System.getHttpHeaders(), ...headers };
+  const impersonateHeaders = System.isProtected() ? System.getImpersonationHeaders() : {};
+  requestSettings.headers = { ...authHeaders, ...System.getHttpHeaders(), ...headers, ...impersonateHeaders };
 
   try {
     const url = `${System.nexus.getUrl()}/${sanitizeUri(uri)}`;

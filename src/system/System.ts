@@ -65,9 +65,11 @@ async function init(settings: InitSettings) {
   SetInstrumentorLogger(log);
 
   const httpHeaders: Record<string, string> = {};
+  const impersonateHeaders: InitSettings['impersonate'] = settings.impersonate || {};
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(system, settings.nexus, settings.auth);
   const eventBus: EventBus = EventBusGenerator();
+  const _protected = settings.protected || false;
 
   function getEventBus(): EventBus {
     return eventBus;
@@ -75,6 +77,14 @@ async function init(settings: InitSettings) {
 
   function getHttpHeaders(): Record<string, string> {
     return { ...httpHeaders };
+  }
+
+  function getImpersonationHeaders(): Record<string, string> {
+    return { ...impersonateHeaders };
+  }
+
+  function isProtected(): boolean {
+    return _protected;
   }
 
   function setHttpHeader(key: string, value: string) {
@@ -97,8 +107,10 @@ async function init(settings: InitSettings) {
   log('debug', 'finished initializing all system lib modules');
 
   const instanceMethods: SystemInstance = {
+    isProtected,
     getEventBus,
     getHttpHeaders,
+    getImpersonationHeaders,
     setHttpHeader,
     getLibModule,
     nexus,

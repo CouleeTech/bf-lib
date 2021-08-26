@@ -12,6 +12,8 @@ export type InitSettings = {
   client: ClientConfig;
   auth: ClientAuth;
   logging: SystemLoggerOptions;
+  impersonate?: Record<string, string>;
+  protected?: boolean;
 };
 
 export type SystemLogLevel = 'debug' | 'info' | 'warn' | 'error';
@@ -37,7 +39,9 @@ export interface SystemWrapper {
 
 export interface SystemInstance {
   nexus: Nexus;
+  isProtected(): boolean;
   getHttpHeaders(): Record<string, string>;
+  getImpersonationHeaders(): Record<string, string>;
   setHttpHeader(key: string, value: string): void;
   getEventBus(): EventBus;
   getLibModule: <T>(type: LibModule) => T;

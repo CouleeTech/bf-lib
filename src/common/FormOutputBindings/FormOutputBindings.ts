@@ -8,17 +8,18 @@ import {
   IModuleLink,
   MODULES,
 } from 'bf-types';
-
 import handlebars from '@timwoods/handlebars';
 
 export const deepResolve = (fullkey: string, object: Record<string, any>) => {
   const keys = fullkey.split('.');
   let current: any = { ...object };
+
   for (const key of keys) {
     if (typeof current === 'object' && current) {
       current = current[key];
     }
   }
+
   return current;
 };
 
@@ -40,6 +41,7 @@ export const resolveOutputBindingValue = (
       return binding.value;
   }
 };
+
 export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBindings) => {
   const clean: FormOutputBindings = {};
   for (const key of Object.keys(formTemplate)) {
@@ -47,6 +49,7 @@ export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBinding
   }
   return clean;
 };
+
 export const convertToTemplateBidningFromDb = (formTemplate: FormOutputBindings) => {
   const clean: FormOutputBindings = {};
   for (const key of Object.keys(formTemplate)) {
@@ -84,12 +87,14 @@ export const formTemplateToChanges = (
     },
     changes: {},
   };
+
   for (const option of Object.keys(form_output_bindings)) {
     const binding = form_output_bindings[option];
     const value = resolveOutputBindingValue(binding, fullContext);
     const keys = option.split('.');
     const target = keys.shift();
     const subkey = keys.join('.');
+
     switch (target) {
       case 'creator':
         creator.changes[subkey] = value;

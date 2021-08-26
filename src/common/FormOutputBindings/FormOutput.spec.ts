@@ -19,10 +19,12 @@ describe('Form Bindings formTemplateToChanges', () => {
         },
       },
     );
+
     const entityModule = changes.find((c) => c.module.module_name === 'TASK_MANAGEMENT');
     expect(changes.length).toEqual(1);
     expect(entityModule?.changes['form_data.TEST_THING']).toEqual(10);
   });
+
   it('has default form', () => {
     const changes = formTemplateToChanges(
       { cool: 'thing' },
@@ -44,6 +46,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
         { ...defaultContext, form_data: {} },
       ),
     ).toEqual(10);
+
     expect(
       resolveOutputBindingValue(
         {
@@ -53,6 +56,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
         { ...defaultContext, form_data: {} },
       ),
     ).not.toEqual(10);
+
     expect(
       resolveOutputBindingValue(
         {
@@ -73,6 +77,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
         { ...defaultContext, form_data: {} },
       ),
     ).toEqual('John Doe');
+
     expect(
       resolveOutputBindingValue(
         {
@@ -82,6 +87,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
         { ...defaultContext, form_data: {} },
       ),
     ).toEqual('Bill Smith');
+
     expect(
       resolveOutputBindingValue(
         {

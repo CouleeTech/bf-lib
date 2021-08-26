@@ -1,7 +1,7 @@
 import { Auth, hasPermissions } from './auth';
 import { ClientConfig, ClientType, NexusConfig } from './common';
 import { ExternalModuleEntity, InsertData, ModuleEntity } from './module/Types';
-import System, { ClientAuth, LibModule, SystemInstance, SystemLoggerOptions } from './system';
+import System, { ClientAuth, InitSettings, LibModule, SystemInstance } from './system';
 
 import { Api } from './api';
 import { Module } from './module';
@@ -22,12 +22,7 @@ export {
   hasPermissions,
 };
 
-export type ConfigSettings = {
-  nexus: NexusConfig;
-  client: ClientConfig;
-  auth: ClientAuth;
-  logging: SystemLoggerOptions;
-};
+export type ConfigSettings = InitSettings;
 
 export interface BfLib {
   api: Api;
@@ -50,6 +45,9 @@ export default async function bflib(settings: ConfigSettings): Promise<BfLib> {
     },
     get multitool() {
       return System.getLibModule<Multitool>(LibModule.MULTITOOL);
+    },
+    async protected(impersonate: ConfigSettings['impersonate']): Promise<BfLib> {
+      return bflib({ ...settings, impersonate, protected: true });
     },
   });
 }
