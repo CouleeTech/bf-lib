@@ -7,6 +7,21 @@ describe('Form Bindings formTemplateToChanges', () => {
     const changes = formTemplateToChanges(
       {
         COOL_ITEM: 'THING',
+        participants: [
+          {
+            module_id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
+            module_name: 'USER_GROUP',
+            roles: [],
+            scopes: ['OWNER'],
+          },
+        ],
+        email_addresses: [
+          {
+            primary: true,
+            id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
+            email_address: 'deviprsd@coulee.tech',
+          },
+        ],
       },
       { ...defaultContext },
       {
@@ -16,18 +31,50 @@ describe('Form Bindings formTemplateToChanges', () => {
             type: 'VALUE',
             value: 10,
           },
-          'entity,custom_attributes,[id;attribute_type:ASDF],attribute_value': {
-            type: 'CONTEXT_TEMPLATE',
-            value: '{{form_data.COOL_ITEM}}',
+          'actor,participants,[module_id;module_name:USER]': {
+            type: 'CONTEXT',
+            value: {
+              data_source: 'form_data',
+              data_key: 'participants',
+            },
+          },
+          'actor,email_addresses,[id;primary]': {
+            type: 'CONTEXT',
+            value: {
+              data_source: 'form_data',
+              data_key: 'email_addresses',
+            },
           },
         },
       },
     );
 
     const entityModule = changes.find((c) => c.module.module_name === 'TASK_MANAGEMENT');
-    expect(changes.length).toEqual(1);
+    const userModule = changes.find((c) => c.module.module_name === 'USER');
+
+    expect(changes.length).toEqual(2);
     expect(entityModule?.changes['form_data.TEST_THING']).toEqual(10);
-    expect(entityModule?.changes['custom_attributes.[id;attribute_type:ASDF].attribute_value']).toEqual('THING');
+
+    expect(
+      userModule?.changes['participants.[module_id:cff01d19-2ea7-4e4e-99bd-39be6c6728cc;module_name:USER]'],
+    ).toMatchObject({
+      module_id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
+      module_name: 'USER_GROUP',
+      roles: [],
+      scopes: ['OWNER'],
+      last_interaction: '2019-12-14T07:09:21.372Z',
+      id: 'd99b8b09-bb1d-4506-acdc-380b9c504517',
+    });
+
+    expect(userModule?.changes['email_addresses.[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]']).toMatchObject(
+      {
+        email_address: 'deviprsd@coulee.tech',
+        name: 'email',
+        primary: true,
+        roles: [],
+        id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
+      },
+    );
   });
 
   it('has default form', () => {

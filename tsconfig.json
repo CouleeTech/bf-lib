@@ -22,6 +22,7 @@
     "strictPropertyInitialization": false,
     // Must be es6 or earilier, or else storybook dies :(
     "target": "es6",
+    "lib": ["ESNext", "DOM"],
     "esModuleInterop": true
   },
   "exclude": ["node_modules"],

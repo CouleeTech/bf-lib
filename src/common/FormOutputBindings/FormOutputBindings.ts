@@ -9,8 +9,9 @@ import {
   MODULES,
 } from 'bf-types';
 import handlebars from '@timwoods/handlebars';
+import deepmerge from 'deepmerge';
 
-export const deepResolve = (fullkey: string, object: Record<string, any>) => {
+export const deepResolve = (fullkey: string, object: Record<string, any>): any => {
   const keys = fullkey.split('.');
   let current: any = { ...object };
 
@@ -28,10 +29,25 @@ type Changes = {
   changes: Record<string, any>;
 };
 
+function combineMerge(target: any[], source: any[], options: any) {
+  const destination = target.slice();
+
+  source.forEach((item, index) => {
+    if (typeof destination[index] === 'undefined') {
+      destination[index] = options.cloneUnlessOtherwiseSpecified(item, options);
+    } else if (options.isMergeableObject(item)) {
+      destination[index] = deepmerge(target[index], item, options);
+    } else if (target.indexOf(item) === -1) {
+      destination.push(item);
+    }
+  });
+  return destination;
+}
+
 export const resolveOutputBindingValue = (
   binding: FormOutputBinding,
   fullContext: EntityFormDataContextDTO & FormDataDoc,
-) => {
+): any => {
   switch (binding.type) {
     case 'CONTEXT':
       return deepResolve(`${binding.value.data_source}.${binding.value.data_key}`, fullContext);
@@ -42,7 +58,7 @@ export const resolveOutputBindingValue = (
   }
 };
 
-export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBindings) => {
+export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBindings): FormOutputBindings => {
   const clean: FormOutputBindings = {};
   for (const key of Object.keys(formTemplate)) {
     clean[key.replace(/,/g, '.')] = formTemplate[key];
@@ -50,13 +66,82 @@ export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBinding
   return clean;
 };
 
-export const convertToTemplateBidningFromDb = (formTemplate: FormOutputBindings) => {
+export const convertToTemplateBidningFromDb = (formTemplate: FormOutputBindings): FormOutputBindings => {
   const clean: FormOutputBindings = {};
   for (const key of Object.keys(formTemplate)) {
     clean[key.replace(/\./g, ',')] = formTemplate[key];
   }
   return clean;
 };
+
+export function castValueFromContext(contextKeyValue: any, matchValue: any): string | number | boolean {
+  switch (typeof contextKeyValue) {
+    case 'number':
+      return parseInt(matchValue, 10);
+    case 'boolean': {
+      if (matchValue === 'true') {
+        return true;
+      } else if (matchValue === 'false') {
+        return false;
+      }
+    }
+    default:
+      return matchValue;
+  }
+}
+
+export function resolveBracketSyntax(
+  target: string | undefined,
+  keys: string[],
+  bindingValues: any[],
+  fullContext: EntityFormDataContextDTO & FormDataDoc,
+): Array<{
+  [x: string]: any;
+}> {
+  const preKey = keys.slice(0, -1).join('.');
+  const postKey = keys[keys.length - 1].replace(/[\[\]]/g, '');
+  const matchers = postKey.split(';').map((subMatcher) => subMatcher.split(':'));
+
+  let contextValues = (deepResolve(`${target}.${preKey}`, fullContext) as any[]) || [];
+  bindingValues = Array.isArray(bindingValues) ? bindingValues : [];
+
+  if (!Array.isArray(contextValues)) {
+    contextValues = [];
+  }
+
+  return bindingValues.flatMap((bindingValue) => {
+    return contextValues
+      .filter((contextValue) =>
+        matchers.reduce<boolean>((pv, cv) => {
+          if (cv.length === 1) {
+            return pv && bindingValue[cv[0]] === contextValue[cv[0]];
+          } else if (cv.length === 2) {
+            const contextKeyValue = contextValue[cv[0]];
+            return pv && contextKeyValue === castValueFromContext(contextKeyValue, cv[1]);
+          }
+
+          return pv && false;
+        }, true),
+      )
+      .map((filterValue) => {
+        const key = matchers
+          .map((matcher) => {
+            if (matcher.length === 1) {
+              return [...matcher, filterValue[matcher[0]]].join(':');
+            }
+
+            return matcher.join(':');
+          })
+          .join(';');
+
+        return {
+          [`${preKey}.[${key}]`]: deepmerge(filterValue, bindingValue, {
+            arrayMerge: combineMerge,
+          }),
+        };
+      });
+  });
+}
 
 export const formTemplateToChanges = (
   form_data: FormData,
@@ -88,13 +173,7 @@ export const formTemplateToChanges = (
     changes: {},
   };
 
-  for (const option of Object.keys(form_output_bindings)) {
-    const binding = form_output_bindings[option];
-    const value = resolveOutputBindingValue(binding, fullContext);
-    const keys = option.split('.');
-    const target = keys.shift();
-    const subkey = keys.join('.');
-
+  function updateChanges(target: string | undefined, subkey: string, value: any) {
     switch (target) {
       case 'creator':
         creator.changes[subkey] = value;
@@ -105,6 +184,27 @@ export const formTemplateToChanges = (
       case 'actor':
         actor.changes[subkey] = value;
         break;
+    }
+  }
+
+  for (let option of Object.keys(form_output_bindings)) {
+    option = option.trim();
+    const binding = form_output_bindings[option];
+    const value = resolveOutputBindingValue(binding, fullContext);
+    const keys = option.split('.');
+    const target = keys.shift();
+    const subkey = keys.join('.');
+
+    if (/.*\[.+\]$/.test(option)) {
+      const bracketSyntaxChanges = resolveBracketSyntax(target, keys, value, fullContext);
+
+      for (const change of bracketSyntaxChanges) {
+        for (const [key, value] of Object.entries(change)) {
+          updateChanges(target, key, value);
+        }
+      }
+    } else {
+      updateChanges(target, subkey, value);
     }
   }
 
