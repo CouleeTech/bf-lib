@@ -16,6 +16,10 @@ describe('Form Bindings formTemplateToChanges', () => {
             type: 'VALUE',
             value: 10,
           },
+          'entity,custom_attributes,[id;attribute_type:ASDF],attribute_value': {
+            type: 'CONTEXT_TEMPLATE',
+            value: '{{form_data.COOL_ITEM}}',
+          },
         },
       },
     );
@@ -23,6 +27,7 @@ describe('Form Bindings formTemplateToChanges', () => {
     const entityModule = changes.find((c) => c.module.module_name === 'TASK_MANAGEMENT');
     expect(changes.length).toEqual(1);
     expect(entityModule?.changes['form_data.TEST_THING']).toEqual(10);
+    expect(entityModule?.changes['custom_attributes.[id;attribute_type:ASDF].attribute_value']).toEqual('THING');
   });
 
   it('has default form', () => {
@@ -67,6 +72,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
       ),
     ).toEqual('testing');
   });
+
   it('resolveOutputBindingValue type of CONTEXT_TEMPLATE', async () => {
     expect(
       resolveOutputBindingValue(
@@ -98,6 +104,7 @@ describe('Form Bindings resolveOutputBindingValue', () => {
       ),
     ).toEqual('John Doe and Bill Smith');
   });
+
   it('resolveOutputBindingValue type of CONTEXT', async () => {
     expect(
       resolveOutputBindingValue(
