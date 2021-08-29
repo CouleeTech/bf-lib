@@ -14,6 +14,7 @@ import {
 } from './Types';
 
 let initialized = false;
+let protectedMode = false;
 const seal = Symbol();
 
 function lock<T extends ObjectType>(obj: T, key: symbol): Lock<T> {
@@ -38,7 +39,7 @@ function sealModule<T extends ObjectType>(module: T): Lock<T> {
 }
 
 async function init(settings: InitSettings) {
-  if (initialized) {
+  if (initialized && protectedMode) {
     return;
   }
 
@@ -69,7 +70,7 @@ async function init(settings: InitSettings) {
   const libModuleMap = new Map<LibModule, Lock<any>>();
   const nexus = await Nexus(system, settings.nexus, settings.auth);
   const eventBus: EventBus = EventBusGenerator();
-  const _protected = settings.protected || false;
+  protectedMode = settings.protected || false;
 
   function getEventBus(): EventBus {
     return eventBus;
@@ -84,7 +85,7 @@ async function init(settings: InitSettings) {
   }
 
   function isProtected(): boolean {
-    return _protected;
+    return protectedMode;
   }
 
   function setHttpHeader(key: string, value: string) {
