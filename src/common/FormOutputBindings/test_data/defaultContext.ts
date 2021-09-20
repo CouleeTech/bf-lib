@@ -199,6 +199,7 @@ export const defaultContext: EntityFormDataContextDTO = {
       },
     ],
     form_data: {},
+    form_fields_metadata: {},
   },
   creator: {
     id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
@@ -398,5 +399,6 @@ export const defaultContext: EntityFormDataContextDTO = {
       },
     ],
     form_data: {},
+    form_fields_metadata: {},
   },
 };

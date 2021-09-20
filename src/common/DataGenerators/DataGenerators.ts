@@ -1,4 +1,4 @@
-import { ALL_MODULES, DomainModuleLink, IModuleAssociation, IModuleLink, IRelatedModule, UUID } from 'bf-types';
+import { ALL_MODULES, DomainModuleLink, IModuleAssociation, ModuleLink, IRelatedModule, UUID } from 'bf-types';
 import { ValidModuleName } from '../types';
 import { toUpperSnakeCase } from '../utils';
 
@@ -61,14 +61,14 @@ export function relatedModule(moduleName: ValidModuleName, moduleId: UUID, modul
 /**
  * Creates a new module link with an empty string for each field
  */
-export function emptyModuleLink(): IModuleLink {
+export function emptyModuleLink(): ModuleLink {
   return { module_name: '', module_id: '' };
 }
 
 /**
  * Creates a new module link that is meant to be used as a placeholder
  */
-export function placeholderModuleLink(moduleId = ''): IModuleLink {
+export function placeholderModuleLink(moduleId = ''): ModuleLink {
   return { module_name: 'PLACEHOLDER', module_id: moduleId };
 }
 
