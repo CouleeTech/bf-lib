@@ -3,7 +3,10 @@ import { Nullable } from '../common';
 import type { HeadersType, ObjectType } from '../system/Types';
 import { RequestMethod } from './Consts';
 
-export type SearchOptions<H extends HeadersType = HeadersType> = Omit<BfSearchOptions, 'filters'> & { headers?: H };
+export type SearchOptions<H extends HeadersType = HeadersType> = Omit<BfSearchOptions, 'filters'> & {
+  headers?: H;
+  withFormData?: boolean;
+};
 
 export interface Api {
   <R = any, P = ObjectType, H extends HeadersType = HeadersType>(

@@ -152,6 +152,15 @@ async function search<T = any, H extends HeadersType = HeadersType>(
   validateDomainAndModule(domain, module);
   const domainUri = domainToUri(domain);
   const moduleUri = moduleToUri(module);
+  if (options?.withFormData) {
+    const response = await request(
+      PUT,
+      `${domainUri}/${moduleUri}/search/context`,
+      { ...options, filters },
+      options?.headers,
+    );
+    return response ? response.map(({ entity }: any) => entity) : [];
+  }
   const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters }, options?.headers);
   return response ? response : [];
 }

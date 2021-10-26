@@ -145,7 +145,6 @@ function entity<T extends IEntity = any>(domain: Domain, module: DomainModule): 
   ): Promise<T[]> {
     return baseSearch<T, H>(api, entityDomain, entityModule, filters, options);
   }
-
   function view<U extends ObjectType, H extends HeadersType = HeadersType>(
     id: UUID,
     data?: U,
