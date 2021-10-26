@@ -22,6 +22,9 @@ export {
   hasPermissions,
 };
 
+export * from './common';
+export * from './api';
+export * from './multitool';
 export type ConfigSettings = InitSettings;
 
 export interface BfLib {
