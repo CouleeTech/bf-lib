@@ -25,6 +25,10 @@ export {
 export * from './common';
 export * from './api';
 export * from './multitool';
+export * from './auth';
+export * from './module';
+export * from './module/Types';
+
 export type ConfigSettings = InitSettings;
 
 export interface BfLib {
