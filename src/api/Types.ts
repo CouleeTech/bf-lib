@@ -19,21 +19,25 @@ export interface Api {
     uri: string,
     params?: P,
     headers?: H,
+    customBaseUrl?: string,
   ) => Promise<Nullable<R>>;
   delete: <R = any, P = ObjectType, H extends HeadersType = HeadersType>(
     uri: string,
     params?: P,
     headers?: H,
+    customBaseUrl?: string,
   ) => Promise<Nullable<R>>;
   post: <R = any, P = ObjectType, H extends HeadersType = HeadersType>(
     uri: string,
     payload?: P,
     headers?: H,
+    customBaseUrl?: string,
   ) => Promise<Nullable<R>>;
   put: <R = any, P = ObjectType, H extends HeadersType = HeadersType>(
     uri: string,
     payload?: P,
     headers?: H,
+    customBaseUrl?: string,
   ) => Promise<Nullable<R>>;
   search: <T = any, H extends HeadersType = HeadersType>(
     domain: Domain,
