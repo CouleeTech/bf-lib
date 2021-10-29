@@ -68,6 +68,7 @@ async function request<R = any, P = Record<string, any>, H = HeadersType>(
   data?: P,
   headers?: H,
   canRetryAuth = true,
+  customBaseUrl?: string,
 ): Promise<Nullable<R>> {
   let authFailed = false;
 
@@ -89,7 +90,8 @@ async function request<R = any, P = Record<string, any>, H = HeadersType>(
   requestSettings.headers = { ...authHeaders, ...System.getHttpHeaders(), ...headers, ...impersonateHeaders };
 
   try {
-    const url = `${System.nexus.getUrl()}/${sanitizeUri(uri)}`;
+    const baseUrl = customBaseUrl || System.nexus.getUrl();
+    const url = `${baseUrl}/${sanitizeUri(uri)}`;
     const response = (await Axios(url, requestSettings)) as AxiosResponse<R>;
     if (!response || !response.data) {
       return null;
@@ -115,32 +117,36 @@ function get<R = any, P = Record<string, any>, H extends HeadersType = HeadersTy
   uri: string,
   params?: P,
   headers?: H,
+  customBaseUrl?: string,
 ): Promise<Nullable<R>> {
-  return request<R, P, H>(GET, uri, params, headers);
+  return request<R, P, H>(GET, uri, params, headers, true, customBaseUrl);
 }
 
 function del<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   params?: P,
   headers?: H,
+  customBaseUrl?: string,
 ): Promise<Nullable<R>> {
-  return request<R, P, H>(DELETE, uri, params, headers);
+  return request<R, P, H>(DELETE, uri, params, headers, true, customBaseUrl);
 }
 
 function post<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   payload?: P,
   headers?: H,
+  customBaseUrl?: string,
 ): Promise<Nullable<R>> {
-  return request<R, P, H>(POST, uri, payload, headers);
+  return request<R, P, H>(POST, uri, payload, headers, true, customBaseUrl);
 }
 
 function put<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   payload?: P,
   headers?: H,
+  customBaseUrl?: string,
 ): Promise<Nullable<R>> {
-  return request<R, P, H>(PUT, uri, payload, headers);
+  return request<R, P, H>(PUT, uri, payload, headers, true, customBaseUrl);
 }
 
 async function search<T = any, H extends HeadersType = HeadersType>(
