@@ -22,7 +22,14 @@ async function getUser(): Promise<IUserEntity> {
 async function getUserDoc(): Promise<IUser> {
   const api = System.getLibModule<Api>(LibModule.API);
   const userId = System.nexus.getUser().sub;
+  const personId = System.nexus.getUser().person_id;
   const user = await api.get<IUser>(`core/user/entity/${userId}`);
+  if (personId && !user) {
+    const person = await api.get<IUser>(`crm/people/entity/${personId}`);
+    if (person) {
+      return person;
+    }
+  }
 
   if (!user) {
     throw new Error('Failed to retrieve the document for the authenticated user.');
