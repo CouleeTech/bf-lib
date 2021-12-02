@@ -98,16 +98,25 @@ async function request<R = any, P = Record<string, any>, H = HeadersType>(
     }
 
     return response.data;
-  } catch (e) {
-    authFailed = rejectedBecauseAuth(e);
+  } catch (e: any) {
+    if (rejectedBecauseAuth(e)) {
+      try {
+        await request<R, P, H>('get', `${System.nexus.getUrl()}/user`, undefined, undefined, false);
+      } catch (e2: any) {
+        authFailed = rejectedBecauseAuth(e2);
+      }
+    }
   }
 
   if (authFailed && canRetryAuth) {
-    // TODO: consider setting an amount of times to retry auth
-    const user = await System.nexus.reconnect();
-    if (user) {
-      return request<R, P, H>(method, uri, data, headers, false);
-    }
+    // Check if valid user
+    try {
+      // TODO: consider setting an amount of times to retry auth
+      const user = await System.nexus.reconnect();
+      if (user) {
+        return request<R, P, H>(method, uri, data, headers, false);
+      }
+    } catch {}
   }
 
   return null;
