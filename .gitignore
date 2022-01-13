@@ -47,3 +47,4 @@ lerna-debug.log*
 *.tgz
 *.orig
 tsconfig.build.tsbuildinfo
+/build

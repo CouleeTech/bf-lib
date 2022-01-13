@@ -1,3 +1,5 @@
 include:
   - project: block-5/bf-pipelines
     file: gitlab-ci.npmstandard.yml
+  - project: block-5/bf-pipelines
+    file: gitlab-ci.systemjs.yml
