@@ -174,6 +174,9 @@ async function search<T = any, H extends HeadersType = HeadersType>(
       { ...options, filters },
       options?.headers,
     );
+    if (options?.mapFormContext === false && response) {
+      return response;
+    }
     return response ? response.map(({ entity }: any) => entity) : [];
   }
   const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters }, options?.headers);

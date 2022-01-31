@@ -6,6 +6,7 @@ import { RequestMethod } from './Consts';
 export type SearchOptions<H extends HeadersType = HeadersType> = Omit<BfSearchOptions, 'filters'> & {
   headers?: H;
   withFormData?: boolean;
+  mapFormContext?: boolean;
 };
 
 export interface Api {
