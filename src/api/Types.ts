@@ -1,4 +1,4 @@
-import { Domain, DomainModule, SearchFilter, SearchOptions as BfSearchOptions } from 'bf-types';
+import { Domain, DomainModule, ModuleLink, SearchFilter, SearchOptions as BfSearchOptions } from 'bf-types';
 import { Nullable } from '../common';
 import type { HeadersType, ObjectType } from '../system/Types';
 import { RequestMethod } from './Consts';
@@ -6,6 +6,7 @@ import { RequestMethod } from './Consts';
 export type SearchOptions<H extends HeadersType = HeadersType> = Omit<BfSearchOptions, 'filters'> & {
   headers?: H;
   withFormData?: boolean;
+  mapFormContext?: boolean;
 };
 
 export interface Api {
@@ -45,4 +46,5 @@ export interface Api {
     filters: SearchFilter[],
     options?: SearchOptions<H>,
   ) => Promise<T[]>;
+  attachment: (filesytem: ModuleLink) => string;
 }

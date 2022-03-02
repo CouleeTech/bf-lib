@@ -1,5 +1,5 @@
 import Axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Domain, DomainModule, SearchFilter } from 'bf-types';
+import { CORE_MODULES, Domain, DomainModule, ModuleLink, SearchFilter } from 'bf-types';
 import { Auth } from '../auth';
 import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
 import System, { HeadersType, LibModule } from '../system';
@@ -174,11 +174,21 @@ async function search<T = any, H extends HeadersType = HeadersType>(
       { ...options, filters },
       options?.headers,
     );
+    if (options?.mapFormContext === false && response) {
+      return response;
+    }
     return response ? response.map(({ entity }: any) => entity) : [];
   }
   const response = await request(PUT, `${domainUri}/${moduleUri}/search`, { ...options, filters }, options?.headers);
   return response ? response : [];
 }
 
-const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put, search }));
+function attachment(filesystem: ModuleLink) {
+  const baseUrl = System.nexus.getUrl();
+  const url = `${baseUrl}/${sanitizeUri('attachment/file')}`;
+
+  return filesystem.module_name === CORE_MODULES.FILESYSTEM ? `${url}/${filesystem.module_id}` : url;
+}
+
+const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put, search, attachment }));
 export default System.sealModule(api);
