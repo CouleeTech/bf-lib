@@ -39,6 +39,10 @@ function sealModule<T extends ObjectType>(module: T): Lock<T> {
 }
 
 async function init(settings: InitSettings) {
+  if (settings.forceInit) {
+    initialized = false;
+    protectedMode = false;
+  }
   if (initialized && protectedMode) {
     return;
   }

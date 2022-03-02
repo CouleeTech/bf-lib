@@ -14,6 +14,7 @@ export type InitSettings = {
   logging: SystemLoggerOptions;
   impersonate?: Record<string, string>;
   protected?: boolean;
+  forceInit?: boolean;
 };
 
 export type SystemLogLevel = 'debug' | 'info' | 'warn' | 'error';
