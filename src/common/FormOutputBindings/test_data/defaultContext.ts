@@ -33,9 +33,6 @@ export const defaultContext: EntityFormDataContextDTO = {
         email_address: 'john.doe@example.net',
         name: 'email',
         primary: true,
-        metadata: {
-          hello: 'world',
-        },
         roles: [],
         id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
       },

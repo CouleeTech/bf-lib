@@ -38,7 +38,7 @@ describe('Form Bindings formTemplateToChanges', () => {
               data_key: 'participants',
             },
           },
-          'actor,email_addresses,[id;primary:true]': {
+          'actor,email_addresses,[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]': {
             type: 'CONTEXT',
             value: {
               data_source: 'form_data',
@@ -56,7 +56,7 @@ describe('Form Bindings formTemplateToChanges', () => {
     expect(entityModule?.changes['form_data.TEST_THING']).toEqual(10);
 
     expect(
-      userModule?.changes['participants.[module_id:cff01d19-2ea7-4e4e-99bd-39be6c6728cc;module_name:USER]'],
+      userModule?.changes['participants._[module_id:cff01d19-2ea7-4e4e-99bd-39be6c6728cc;module_name:USER]'],
     ).toMatchObject({
       module_id: 'cff01d19-2ea7-4e4e-99bd-39be6c6728cc',
       module_name: 'USER_GROUP',
@@ -66,15 +66,15 @@ describe('Form Bindings formTemplateToChanges', () => {
       id: 'd99b8b09-bb1d-4506-acdc-380b9c504517',
     });
 
-    expect(userModule?.changes['email_addresses.[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]']).toMatchObject(
-      {
-        email_address: 'deviprsd@coulee.tech',
-        name: 'email',
-        primary: true,
-        roles: [],
-        id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
-      },
-    );
+    expect(
+      userModule?.changes['email_addresses._[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]'],
+    ).toMatchObject({
+      email_address: 'deviprsd@coulee.tech',
+      name: 'email',
+      primary: true,
+      roles: [],
+      id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
+    });
   });
 
   it('has default form', () => {
