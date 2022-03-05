@@ -17,7 +17,10 @@ describe('Form Bindings formTemplateToChanges', () => {
         ],
         email_addresses: [
           {
-            primary: true,
+            roles: ['main', 'secondary'],
+            metadata: {
+              hello: 'world',
+            },
             id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
             email_address: 'deviprsd@coulee.tech',
           },
@@ -38,7 +41,7 @@ describe('Form Bindings formTemplateToChanges', () => {
               data_key: 'participants',
             },
           },
-          'actor,email_addresses,[id;primary]': {
+          'actor,email_addresses,[id;metadata]': {
             type: 'CONTEXT',
             value: {
               data_source: 'form_data',

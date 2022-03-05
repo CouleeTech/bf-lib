@@ -10,6 +10,7 @@ import {
 } from 'bf-types';
 import handlebars from '@timwoods/handlebars';
 import deepmerge from 'deepmerge';
+import isEqual from 'lodash.isequal';
 
 export const deepResolve = (fullkey: string, object: Record<string, any>): any => {
   const keys = fullkey.split('.');
@@ -114,10 +115,14 @@ export function resolveBracketSyntax(
       .filter((contextValue) =>
         matchers.reduce<boolean>((pv, cv) => {
           if (cv.length === 1) {
-            return pv && bindingValue[cv[0]] === contextValue[cv[0]];
+            const key = cv[0];
+            const resolvedBindingValue = deepResolve(key, bindingValue);
+            const resolvedContextValue = deepResolve(key, contextValue);
+
+            return pv && isEqual(resolvedBindingValue, resolvedContextValue);
           } else if (cv.length === 2) {
-            const contextKeyValue = contextValue[cv[0]];
-            return pv && contextKeyValue === castValueFromContext(contextKeyValue, cv[1]);
+            const contextKeyValue = deepResolve(cv[0], contextValue);
+            return pv && isEqual(contextKeyValue, castValueFromContext(contextKeyValue, cv[1]));
           }
 
           return pv && false;
@@ -127,7 +132,11 @@ export function resolveBracketSyntax(
         const key = matchers
           .map((matcher) => {
             if (matcher.length === 1) {
-              return [...matcher, filterValue[matcher[0]]].join(':');
+              const resolvedFilterValue = deepResolve(matcher[0], filterValue);
+              return [
+                ...matcher,
+                typeof resolvedFilterValue === 'object' ? JSON.stringify(resolvedFilterValue) : resolvedFilterValue,
+              ].join(':');
             }
 
             return matcher.join(':');
@@ -191,7 +200,7 @@ export const formTemplateToChanges = (
     option = option.trim();
     const binding = form_output_bindings[option];
     const value = resolveOutputBindingValue(binding, fullContext);
-    const keys = option.split('.');
+    const keys = option.split(/\.(?![^[]*])/gi);
     const target = keys.shift();
     const subkey = keys.join('.');
 
