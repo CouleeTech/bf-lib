@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "editor.tabSize": 2,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.suggest.preview": true,
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true,
+      "source.fixAll.eslint": true
+    },
+    "eslint.format.enable": true,
+    "i18n-ally.localesPaths": [
+      "src/locales"
+    ]
+  }
+}
