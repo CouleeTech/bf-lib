@@ -11,6 +11,7 @@ import {
 import handlebars from '@timwoods/handlebars';
 import deepmerge from 'deepmerge';
 import isEqual from 'lodash.isequal';
+import { v4 } from 'uuid';
 
 export const deepResolve = (fullkey: string, object: Record<string, any>): any => {
   const keys = fullkey.split('.');
@@ -140,17 +141,17 @@ export function resolveBracketSyntax(
   const matchers = postKey.split(';').map((subMatcher) => subMatcher.split(':'));
 
   let contextValues = (deepResolve(`${target}.${preKey}`, fullContext) as any[]) || [];
-  bindingValues = Array.isArray(bindingValues) ? bindingValues : [];
+  bindingValues = Array.isArray(bindingValues) ? bindingValues : [bindingValues];
 
   if (!Array.isArray(contextValues)) {
     contextValues = [];
   }
 
   const resolveValue = (changeActionSymbol: '_' | '+' | '-', value: unknown, mergeValue: unknown = {}) => {
-    const key = matchers
+    const key = (['REPLACE', 'UPSERT'].includes(stratergy) && !postKey ? [['id']] : matchers)
       .map((matcher) => {
         if (matcher.length === 1) {
-          const resolvedContextValue = deepResolve(matcher[0], value as any);
+          const resolvedContextValue = deepResolve(matcher[0], value as any) || v4();
 
           return [
             ...matcher,
@@ -169,46 +170,71 @@ export function resolveBracketSyntax(
     };
   };
 
-  return bindingValues.flatMap((bindingValue) => {
+  const isFoundHistoryHistory: boolean[][] = [];
+
+  const _changeActions = bindingValues.flatMap((bindingValue) => {
     const changeActions: Array<{
       [x: string]: unknown;
     }> = [];
+    const isFoundHistory = [];
 
     for (const contextValue of contextValues) {
-      const isFound = matchers.reduce<boolean>((pv, cv) => {
-        if (cv.length === 1) {
-          const key = cv[0];
-          const resolvedBindingValue = deepResolve(key, bindingValue);
-          const resolvedContextValue = deepResolve(key, contextValue);
+      const isFound = matchers.reduce<boolean>(
+        (pv, cv) => {
+          if (cv.length === 1) {
+            const key = cv[0];
+            const resolvedBindingValue = deepResolve(key, bindingValue);
+            const resolvedContextValue = deepResolve(key, contextValue);
 
-          return pv && isEqual(resolvedBindingValue, resolvedContextValue);
-        } else if (cv.length === 2) {
-          const contextKeyValue = deepResolve(cv[0], contextValue);
-          return pv && isEqual(contextKeyValue, castValueFromContext(contextKeyValue, cv[1]));
-        }
+            return pv && isEqual(resolvedBindingValue, resolvedContextValue);
+          } else if (cv.length === 2) {
+            const contextKeyValue = deepResolve(cv[0], contextValue);
+            return pv && isEqual(contextKeyValue, castValueFromContext(contextKeyValue, cv[1]));
+          }
 
-        return pv && false;
-      }, true);
+          return pv && false;
+        },
+        !postKey && stratergy === 'REPLACE' ? false : true,
+      );
+
+      isFoundHistory.push(isFound);
 
       if (stratergy === 'UPDATE' && isFound) {
         changeActions.push(resolveValue('_', bindingValue, contextValue));
       } else if (stratergy === 'UPSERT') {
+        // Update found by merging
         if (isFound) {
           changeActions.push(resolveValue('_', bindingValue, contextValue));
-        } else {
-          changeActions.push(resolveValue('+', bindingValue));
         }
       } else if (stratergy === 'REPLACE') {
+        // Update by replacing
         if (isFound) {
-          changeActions.push(resolveValue('-', contextValue));
+          changeActions.push(resolveValue('_', bindingValue, { id: contextValue.id }));
         }
-
-        changeActions.push(resolveValue('+', bindingValue));
       }
+    }
+
+    const isSomeFound = isFoundHistory.some((isFound) => isFound);
+    isFoundHistoryHistory.push(isFoundHistory);
+    if (['REPLACE', 'UPSERT'].includes(stratergy) && !isSomeFound) {
+      // Insert if atleast a single value didn't match
+      changeActions.push(resolveValue('+', bindingValue));
     }
 
     return changeActions;
   });
+
+  // Remove all old items that were not found any binding value
+  if (stratergy === 'REPLACE') {
+    for (let i = 0; i < contextValues.length; i++) {
+      const isSomeFoundHorizontally = isFoundHistoryHistory.some((isFoundHistory) => isFoundHistory[i]);
+      if (!isSomeFoundHorizontally) {
+        _changeActions.push(resolveValue('-', contextValues[i]));
+      }
+    }
+  }
+
+  return _changeActions;
 }
 
 export const formTemplateToChanges = (

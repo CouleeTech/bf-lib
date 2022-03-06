@@ -21,6 +21,15 @@ describe('Form Bindings formTemplateToChanges', () => {
             id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
             email_address: 'deviprsd@coulee.tech',
           },
+          {
+            roles: [],
+            id: '5a12806d-c9db-4e58-8d1a-f87c10681d00',
+            email_address: 'deviprsd21@coulee.tech',
+          },
+          {
+            roles: [],
+            email_address: 'deviprsd21@gmail.tech',
+          },
         ],
       },
       { ...defaultContext },
@@ -38,7 +47,7 @@ describe('Form Bindings formTemplateToChanges', () => {
               data_key: 'participants',
             },
           },
-          'actor,email_addresses,[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]': {
+          'actor,email_addresses,~[id;primary:true]': {
             type: 'CONTEXT',
             value: {
               data_source: 'form_data',
