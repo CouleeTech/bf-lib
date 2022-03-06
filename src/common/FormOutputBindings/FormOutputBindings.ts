@@ -155,7 +155,9 @@ export function resolveBracketSyntax(
 
           return [
             ...matcher,
-            typeof resolvedContextValue === 'object' ? JSON.stringify(resolvedContextValue) : resolvedContextValue,
+            typeof resolvedContextValue === 'object' && !Array.isArray(resolvedContextValue)
+              ? JSON.stringify(resolvedContextValue)
+              : resolvedContextValue,
           ].join(':');
         }
 
@@ -202,12 +204,12 @@ export function resolveBracketSyntax(
       if (stratergy === 'UPDATE' && isFound) {
         changeActions.push(resolveValue('_', bindingValue, contextValue));
       } else if (stratergy === 'UPSERT') {
-        // Update found by merging
+        // Update by merging
         if (isFound) {
           changeActions.push(resolveValue('_', bindingValue, contextValue));
         }
       } else if (stratergy === 'REPLACE') {
-        // Update by replacing
+        // Update by replacing and all timwood module properties have ids
         if (isFound) {
           changeActions.push(resolveValue('_', bindingValue, { id: contextValue.id }));
         }
@@ -224,7 +226,7 @@ export function resolveBracketSyntax(
     return changeActions;
   });
 
-  // Remove all old items that were not found any binding value
+  // Remove all old items that didn't match any binding value
   if (stratergy === 'REPLACE') {
     for (let i = 0; i < contextValues.length; i++) {
       const isSomeFoundHorizontally = isFoundHistoryHistory.some((isFoundHistory) => isFoundHistory[i]);
