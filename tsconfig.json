@@ -20,6 +20,8 @@
     "sourceMap": false,
     "strict": true,
     "strictPropertyInitialization": false,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     // Must be es6 or earilier, or else storybook dies :(
     "target": "es6",
     "lib": ["ESNext", "DOM"],

@@ -99,7 +99,7 @@
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/eslint-plugin-tslint": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "bf-types": "^5.42.1",
+    "bf-types": "^5.52.29",
     "commitizen": "^4.2.2",
     "eslint": "^7.24.0",
     "eslint-config-prettier": "^8.2.0",
