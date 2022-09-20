@@ -79,8 +79,7 @@ describe('Form Bindings formTemplateToChanges', () => {
       userModule?.changes['email_addresses._[id:f67b3d46-65fc-4f8d-956b-c1ce35761664;primary:true]'],
     ).toMatchObject({
       email_address: 'deviprsd@coulee.tech',
-      name: 'email',
-      primary: true,
+
       roles: [],
       id: 'f67b3d46-65fc-4f8d-956b-c1ce35761664',
     });

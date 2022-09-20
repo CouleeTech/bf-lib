@@ -34,6 +34,12 @@ export interface Api {
     headers?: H,
     customBaseUrl?: string,
   ) => Promise<Nullable<R>>;
+  patch: <R = any, P = ObjectType, H extends HeadersType = HeadersType>(
+    uri: string,
+    payload?: P,
+    headers?: H,
+    customBaseUrl?: string,
+  ) => Promise<Nullable<R>>;
   put: <R = any, P = ObjectType, H extends HeadersType = HeadersType>(
     uri: string,
     payload?: P,

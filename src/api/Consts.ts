@@ -1,9 +1,10 @@
 export const GET = 'get';
 export const POST = 'post';
+export const PATCH = 'PATCH';
 export const PUT = 'put';
 export const DELETE = 'delete';
 
-export type RequestMethod = typeof GET | typeof POST | typeof PUT | typeof DELETE;
+export type RequestMethod = typeof GET | typeof POST | typeof PUT | typeof DELETE | typeof PATCH;
 
 export const X_ORGANIZATION = 'X-Organization';
 export const X_CLIENT_TZ = 'X-Client-Tz';

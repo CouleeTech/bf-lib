@@ -4,7 +4,18 @@ import { Auth } from '../auth';
 import { domainToUri, moduleToUri, Nullable, validateDomainAndModule } from '../common';
 import System, { HeadersType, LibModule } from '../system';
 import { makeCallable } from '../system/Utils';
-import { DELETE, FORBIDDEN, GET, POST, PUT, RequestMethod, UNAUTHORIZED, X_CLIENT_TZ, X_ORGANIZATION } from './Consts';
+import {
+  DELETE,
+  FORBIDDEN,
+  GET,
+  PATCH,
+  POST,
+  PUT,
+  RequestMethod,
+  UNAUTHORIZED,
+  X_CLIENT_TZ,
+  X_ORGANIZATION,
+} from './Consts';
 import { Api, SearchOptions } from './Types';
 
 let lastAuthHeaders = -1;
@@ -149,6 +160,15 @@ function post<R = any, P = Record<string, any>, H extends HeadersType = HeadersT
   return request<R, P, H>(POST, uri, payload, headers, true, customBaseUrl);
 }
 
+function patch<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
+  uri: string,
+  payload?: P,
+  headers?: H,
+  customBaseUrl?: string,
+): Promise<Nullable<R>> {
+  return request<R, P, H>(PATCH, uri, payload, headers, true, customBaseUrl);
+}
+
 function put<R = any, P = Record<string, any>, H extends HeadersType = HeadersType>(
   uri: string,
   payload?: P,
@@ -190,5 +210,5 @@ function attachment(filesystem: ModuleLink) {
   return filesystem.module_name === CORE_MODULES.FILESYSTEM ? `${url}/${filesystem.module_id}` : url;
 }
 
-const api: Api = Object.freeze(makeCallable(request, { get, delete: del, post, put, search, attachment }));
+const api: Api = Object.freeze(makeCallable(request, { patch, get, delete: del, post, put, search, attachment }));
 export default System.sealModule(api);
