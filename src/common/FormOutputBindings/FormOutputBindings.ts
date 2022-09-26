@@ -29,6 +29,7 @@ export const deepResolve = (fullkey: string, object: Record<string, any>): any =
 type Changes = {
   module: IModuleLink | { module_name: MODULES; module_id: 'create' };
   changes: Record<string, any>;
+  create?: boolean;
 };
 
 export type ArrayModulePropertyStrategy = {
@@ -243,6 +244,7 @@ export const formTemplateToChanges = (
   form_data: FormData,
   context: EntityFormDataContextDTO,
   formTemplate: Partial<EntityFormTemplate> & Pick<EntityFormTemplate, 'form_output_bindings' | 'linked_module_name'>,
+  create?: boolean,
 ): Changes[] => {
   const fullContext = { ...context, form_data };
   const changes: Changes[] = [];
@@ -253,6 +255,7 @@ export const formTemplateToChanges = (
       module_id: context.entity?.id || 'create',
     },
     changes: {},
+    create,
   };
   const creator: Changes = {
     module: {
