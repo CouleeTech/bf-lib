@@ -270,6 +270,7 @@ export const formTemplateToChanges = (
   const fullContext = { ...context, form_data };
   const changes: Changes[] = [];
   const form_output_bindings = convertFormTemplateBindingFromDb(formTemplate.form_output_bindings);
+
   const entity: Changes = {
     module: {
       module_name: context.entity?.module_name || formTemplate.linked_module_name,

@@ -1,6 +1,7 @@
 import { formTemplateToChanges, resolveOutputBindingValue } from './FormOutputBindings';
 
 import { defaultContext } from './test_data/defaultContext';
+import { formTemplateToChangesRealTest1 } from './test_data/realDataTest1';
 
 describe('Form Bindings formTemplateToChanges', () => {
   it('Create with form', () => {
@@ -92,6 +93,42 @@ describe('Form Bindings formTemplateToChanges', () => {
       { linked_module_name: 'TASK_MANAGEMENT', form_output_bindings: {} },
     );
     expect(changes.length).toEqual(1);
+  });
+  it('Failing Real Sinario 1 ', () => {
+    const { formData, template, context } = formTemplateToChangesRealTest1;
+    const changes = formTemplateToChanges(formData, context, template, true);
+    expect(changes[0]?.changes?.title).toEqual('Transport 6284ca2');
+    expect(
+      resolveOutputBindingValue(
+        {
+          type: 'CONTEXT',
+          value: {
+            data_source: 'form_data',
+            data_key: 'title',
+          },
+          default: {
+            data_source: 'entity',
+            data_key: 'id',
+            manipulators: [
+              {
+                manipulator_type: 'SUBSTR',
+                value: '',
+                config: {
+                  start: 0,
+                  length: 7,
+                },
+              },
+              {
+                manipulator_type: 'PREPEND',
+                value: 'Transport ',
+                config: {},
+              },
+            ],
+          },
+        },
+        context as any,
+      ),
+    );
   });
 });
 
