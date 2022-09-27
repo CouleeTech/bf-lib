@@ -159,8 +159,9 @@ describe('Form Bindings resolveOutputBindingValue', () => {
       ),
     ).toEqual('John Doe and Bill Smith');
   });
-
-  it('resolveOutputBindingValue type of CONTEXT', async () => {
+  it('resolveOutputBindingValue type of Default', async () => {
+    const testContext = { ...defaultContext };
+    testContext.actor.title = '';
     expect(
       resolveOutputBindingValue(
         {
@@ -169,9 +170,48 @@ describe('Form Bindings resolveOutputBindingValue', () => {
             data_source: 'actor',
             data_key: 'title',
           },
+          default: {
+            data_source: 'actor',
+            data_key: 'first_name',
+          },
         },
-        { ...defaultContext, form_data: {} },
+        { ...testContext, form_data: {} },
       ),
-    ).toEqual('John Doe');
+    ).toEqual('John');
+  });
+  it('resolveOutputBindingValue type of Default with Manipulaotrs', async () => {
+    const testContext = { ...defaultContext };
+    testContext.actor.title = '';
+    expect(
+      resolveOutputBindingValue(
+        {
+          type: 'CONTEXT',
+          value: {
+            data_source: 'actor',
+            data_key: 'title',
+          },
+          default: {
+            data_source: 'actor',
+            data_key: 'id',
+            manipulators: [
+              {
+                manipulator_type: 'SUBSTR',
+                value: '',
+                config: {
+                  start: 0,
+                  length: 7,
+                },
+              },
+              {
+                manipulator_type: 'PREPEND',
+                value: 'Transport ',
+                config: {},
+              },
+            ],
+          },
+        },
+        { ...testContext, form_data: {} },
+      ),
+    ).toEqual('Transport cff01d1');
   });
 });

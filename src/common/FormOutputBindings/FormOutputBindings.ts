@@ -3,6 +3,7 @@ import {
   EntityFormTemplate,
   FormData,
   FormDataDoc,
+  FormManipulator,
   FormOutputBinding,
   FormOutputBindings,
   IModuleLink,
@@ -12,6 +13,7 @@ import handlebars from '@timwoods/handlebars';
 import deepmerge from 'deepmerge';
 import isEqual from 'lodash.isequal';
 import { v4 } from 'uuid';
+import { getManipulatedValue } from './FormOutputManipulator';
 
 export const deepResolve = (fullkey: string, object: Record<string, any>): any => {
   const keys = fullkey.split('.');
@@ -52,18 +54,37 @@ function combineMerge(target: any[], source: any[], options: any) {
   return destination;
 }
 
+export const resolveUnmanipulatedOutputValue = (
+  binding: FormOutputBinding,
+  fullContext: EntityFormDataContextDTO & FormDataDoc,
+): {
+  source: 'value' | 'default';
+  value: any;
+  manipulators?: FormManipulator[];
+} => {
+  switch (binding.type) {
+    case 'CONTEXT':
+      const value = deepResolve(`${binding.value.data_source}.${binding.value.data_key}`, fullContext);
+      if (value || !binding.default) {
+        return { value, source: 'value', manipulators: binding.value.manipulators };
+      }
+      const defaultValue = deepResolve(`${binding.default.data_source}.${binding.default.data_key}`, fullContext);
+      return { value: defaultValue, source: 'default', manipulators: binding.default.manipulators };
+
+    case 'CONTEXT_TEMPLATE': {
+      const value = handlebars.compile(binding.value)(fullContext);
+      return { value, source: 'value' };
+    }
+    case 'VALUE':
+      return { value: binding.value, source: 'value' };
+  }
+};
+
 export const resolveOutputBindingValue = (
   binding: FormOutputBinding,
   fullContext: EntityFormDataContextDTO & FormDataDoc,
 ): any => {
-  switch (binding.type) {
-    case 'CONTEXT':
-      return deepResolve(`${binding.value.data_source}.${binding.value.data_key}`, fullContext);
-    case 'CONTEXT_TEMPLATE':
-      return handlebars.compile(binding.value)(fullContext);
-    case 'VALUE':
-      return binding.value;
-  }
+  return getManipulatedValue(binding, fullContext);
 };
 
 export const convertFormTemplateBindingFromDb = (formTemplate: FormOutputBindings): FormOutputBindings => {
