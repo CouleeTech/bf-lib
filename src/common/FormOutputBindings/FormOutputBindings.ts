@@ -28,7 +28,7 @@ export const deepResolve = (fullkey: string, object: Record<string, any>): any =
   return current;
 };
 
-type Changes = {
+export type Changes = {
   module: IModuleLink | { module_name: MODULES; module_id: 'create' };
   changes: Record<string, any>;
   create?: boolean;
